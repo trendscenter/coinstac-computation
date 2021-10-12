@@ -26,7 +26,7 @@ class Local:
 
             """Share args to remote"""
             self.out['args'] = {**self.args}
-            for k in self.out['args']:
+            for k in self.out['args'].keys():
                 self.out['args'][k] = self.cache[k]
 
             self.cache['args'] = self.out['args']
