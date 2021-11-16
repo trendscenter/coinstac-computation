@@ -1,0 +1,22 @@
+[
+  {
+    "secret": {
+      "value": 10
+    }
+  },
+  {
+    "secret": {
+      "value": 11
+    }
+  },
+  {
+    "secret": {
+      "value": 12
+    }
+  },
+  {
+    "secret": {
+      "value": 13
+    }
+  }
+]

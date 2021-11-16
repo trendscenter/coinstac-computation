@@ -32,38 +32,47 @@ class FrozenDict(dict):
 
 
 class Phase:
-    def __init__(self, phase_id, cache=None, **kw):
-        self.id = f"PHASE:{phase_id}"
-        self.cache = cache
-        if not self.cache.get(self.id):
-            self._init_phase()
-            self.cache[self.id] = True
+    def __init__(self, phase_id, cache, input, state):
+        self._id = f"PHASE:{phase_id}"
 
-    def _init_phase(self):
+        self.cache = cache
+        self.input = input
+        self.state = state
+
+        if not self.cache.get(self._id):
+            self._initialize()
+            self.cache[self._id] = True
+
+    def _initialize(self):
         pass
 
     def run(self):
         return {}
 
     def __str__(self):
-        return f"{self.id}"
+        return f"{self._id}"
 
 
 class PhasePipeline(_Iter):
-    def __init__(self, pipeline_id, cache=None, **kw):
-        self.id = f"PHASE-PIPE:{pipeline_id}"
+    def __init__(self, pipeline_id, cache, input, state, **kw):
+        self._id = f"PHASE-PIPE:{pipeline_id}"
+
         super().__init__(cache=cache, **kw)
-        if not self.cache.get(self.id):
-            self._init_phase_pipeline()
-            self.cache[self.id] = True
+        self.input = input
+        self.state = state
+
+        if not self.cache.get(self._id):
+            self._initialize()
+            self.cache[self._id] = True
+
         self.phases = OrderedDict()
         self.end = 0
 
-    def _init_phase_pipeline(self):
+    def _initialize(self):
         pass
 
     def add_phase(self, phase: Phase):
-        self.phases[phase.id] = phase
+        self.phases[phase._id] = phase
         self.end += 1
 
     def __len__(self):

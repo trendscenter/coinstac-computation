@@ -1,25 +1,25 @@
 class Iterator(StopIteration):
     def __init__(self, cache=None, start=0, end=1, step=1):
-        self.id = ''
+        self._id = ''
         self.cache = cache
         self.out = {}
         self.reversed = reversed
 
         self.begin = start
-        if cache.get(f"ITERATOR:{self.id}"):
-            self.begin = cache[f"ITERATOR:{self.id}"]['begin']
+        if cache.get(f"ITERATOR:{self._id}"):
+            self.begin = cache[f"ITERATOR:{self._id}"]['begin']
 
         self.end = end
-        if cache.get(f"ITERATOR:{self.id}"):
-            self.end = cache[f"ITERATOR:{self.id}"]['end']
+        if cache.get(f"ITERATOR:{self._id}"):
+            self.end = cache[f"ITERATOR:{self._id}"]['end']
 
         self.step = step
-        if cache.get(f"ITERATOR:{self.id}"):
-            self.step = cache[f"ITERATOR:{self.id}"]['step']
+        if cache.get(f"ITERATOR:{self._id}"):
+            self.step = cache[f"ITERATOR:{self._id}"]['step']
 
         self.i = start
-        if cache.get(f"ITERATOR:{self.id}"):
-            self.i = cache[f"ITERATOR:{self.id}"]['i']
+        if cache.get(f"ITERATOR:{self._id}"):
+            self.i = cache[f"ITERATOR:{self._id}"]['i']
 
         assert step != 0, "Step size should not be zero."
 
@@ -56,7 +56,7 @@ class Iterator(StopIteration):
 
     def __next__(self):
 
-        if self.cache.get(f'ITERATOR:{self.id}', {}).get('stop'):
+        if self.cache.get(f'ITERATOR:{self._id}', {}).get('stop'):
             raise StopIteration
 
         iterator = {
@@ -67,8 +67,8 @@ class Iterator(StopIteration):
         }
         iterator.update(**self._step())
 
-        self.out[f'ITERATOR:{self.id}'] = iterator
-        self.cache[f'ITERATOR:{self.id}'] = iterator
+        self.out[f'ITERATOR:{self._id}'] = iterator
+        self.cache[f'ITERATOR:{self._id}'] = iterator
         return iterator
 
 #
