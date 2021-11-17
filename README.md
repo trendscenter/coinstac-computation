@@ -106,6 +106,12 @@ coinstac.start(local.compute, remote.compute)
 ```
 <hr />
 
+### Run
+```
+cd example
+docker build -t base . && coinstac-simulator
+```
+
 #### Extras:
 * Must set `debug=False` while deploying.
 * Is backward compaitible to compspecVersion=1(deprecated now):
