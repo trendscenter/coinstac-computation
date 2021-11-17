@@ -1,7 +1,5 @@
 from collections import OrderedDict
 
-from iterator import Iterator as _Iter
-
 
 def check(logic, k, v, kw):
     phases = []
@@ -31,49 +29,51 @@ class FrozenDict(dict):
             self[k] = v
 
 
-class Phase:
-    def __init__(self, phase_id, cache, input, state):
-        self._id = f"PHASE:{phase_id}"
-
+class ComputationPhase:
+    def __init__(self, phase_id, cache, input, state, **kw):
+        self.id = f"PHASE:{phase_id}"
         self.cache = cache
         self.input = input
         self.state = state
 
-        if not self.cache.get(self._id):
+        if not self.cache.get(self.id):
             self._initialize()
-            self.cache[self._id] = True
+            self.cache[self.id] = True
 
     def _initialize(self):
         pass
 
-    def run(self):
+    def compute(self):
         return {}
 
     def __str__(self):
-        return f"{self._id}"
+        return f"{self.id}"
 
 
-class PhasePipeline(_Iter):
-    def __init__(self, pipeline_id, cache, input, state, **kw):
-        self._id = f"PHASE-PIPE:{pipeline_id}"
+class PhaseEndWithSuccess(ComputationPhase):
+    def compute(self):
+        return {'success': True}
 
-        super().__init__(cache=cache, **kw)
-        self.input = input
-        self.state = state
 
-        if not self.cache.get(self._id):
+class PhasePipeline:
+    def __init__(self, pipeline_id, cache, **kw):
+        self.id = f"PHASE-PIPE:{pipeline_id}"
+        self.cache = cache
+
+        if not cache.get(self.id):
             self._initialize()
-            self.cache[self._id] = True
+            self.cache[self.id] = True
 
         self.phases = OrderedDict()
-        self.end = 0
+        self.multi_iterations = {}
 
     def _initialize(self):
-        pass
+        self.cache['phase_state'] = {'current_index': 0, 'iterations': {}}
 
-    def add_phase(self, phase: Phase):
-        self.phases[phase._id] = phase
-        self.end += 1
+    def add_phase(self, phase_cls, multi_iterations=False):
+        self.phases[phase_cls.__name__] = phase_cls
+        self.multi_iterations[phase_cls.__name__] = multi_iterations
+        self.cache['phase_state']['iterations'][phase_cls.__name__] = 0
 
     def __len__(self):
         return len(self.phases)
@@ -82,13 +82,15 @@ class PhasePipeline(_Iter):
     def phase_ids(self):
         return list(self.phases.keys())
 
-    def run(self):
-        return {}
+    def next_phase(self, jump_phase=False):
+        phase_key = self.phase_ids[self.cache['phase_state']['current_index']]
+        self.cache['phase_state']['iterations'][phase_key] += 1
 
-    def __next__(self):
-        self.run()
-        nxt = next(self)
-        return self.phase_ids[nxt['i']], nxt
+        if not self.multi_iterations[phase_key] or jump_phase:
+            if self.cache['phase_state']['current_index'] < len(self.phases) - 1:
+                self.cache['phase_state']['current_index'] += 1
+
+        return phase_key
 
     def __str__(self):
         return [f"{id}" for id in self.phases]
