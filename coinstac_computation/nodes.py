@@ -68,6 +68,10 @@ class COINSTACPyNode:
         return output
 
     def to_stdout(self):
+        """
+        Deprecated.
+        Support for the old library.
+        """
         data = _json.loads(_sys.stdin.read())
         self.compute(data)
         output = {'output': self.out, 'cache': self.cache}
