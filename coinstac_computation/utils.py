@@ -41,6 +41,7 @@ class ComputationPhase:
             self.cache[self.id] = True
 
     def _initialize(self):
+        """Runs only once"""
         pass
 
     def compute(self):
@@ -68,6 +69,7 @@ class PhasePipeline:
         self.multi_iterations = {}
 
     def _initialize(self):
+        """Runs only once"""
         self.cache['phase_state'] = {'current_index': 0, 'iterations': {}}
 
     def add_phase(self, phase_cls, multi_iterations=False):
