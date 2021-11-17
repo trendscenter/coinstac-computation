@@ -22,7 +22,6 @@ pip install coinstac-computation
 * Multiple computation phases.
 * Multiple iterations per phase.
 * Automatic phase transition.
-* Super flexible
 
 ## Use case: Gather max even numbers from each site
 #### A full working use case is in the example directory where
@@ -105,7 +104,9 @@ from remote_pipeline import remote
 
 coinstac.start(local.compute, remote.compute)
 ```
-#### Note:
+<hr />
+
+#### Extras:
 * Must set `debug=False` while deploying.
 * Is backward compaitible to compspecVersion=1(deprecated now):
   * Add the following snippet at the end of local and remote pipeline scripts.
@@ -113,4 +114,21 @@ coinstac.start(local.compute, remote.compute)
 ```python
 if __name__ == "__main__":
     local_node.to_stdout()
+
+```
+#### Specify a phase that needs to be run multiple inerations as:
+```python
+remote.add_phase(SomeIterativePhase, multi_iterations=True)
+```
+and to stop, just return jump_to_next=True as:
+```python
+class SomeIterativePhase(ComputationPhase):
+    def compute(self):
+        """All your stuff here..."""
+        
+        """check if you are done with this phase 
+            and want to jump to the next.
+        """
+        should_jump:bool = ... 
+        return {..., 'jump_to_next':should_jump}
 ```
