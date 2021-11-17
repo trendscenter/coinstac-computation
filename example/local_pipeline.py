@@ -1,5 +1,5 @@
-from coinstac_computation import COINSTACPyNode, ComputationPhase
 import os
+from coinstac_computation import COINSTACPyNode, ComputationPhase
 
 
 class PhaseLoadData(ComputationPhase):
