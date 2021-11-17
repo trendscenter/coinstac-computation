@@ -110,7 +110,7 @@ coinstac.start(local.compute, remote.compute)
 * Is backward compaitible to compspecVersion=1(deprecated now):
   * Add the following snippet at the end of local and remote pipeline scripts.
   * Use compspecVersion1 format.
-```json
+```python
 if __name__ == "__main__":
     local_node.to_stdout()
 ```
