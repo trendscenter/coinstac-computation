@@ -50,6 +50,11 @@ class ComputationPhase:
         return f"{self.id}"
 
 
+class PhaseEndWithSuccess(ComputationPhase):
+    def compute(self):
+        return {'success': True}
+
+
 class PhasePipeline:
     def __init__(self, pipeline_id, cache, **kw):
         self.id = f"PHASE-PIPE:{pipeline_id}"
@@ -77,11 +82,11 @@ class PhasePipeline:
     def phase_ids(self):
         return list(self.phases.keys())
 
-    def next_phase(self):
+    def next_phase(self, jump_phase=False):
         phase_key = self.phase_ids[self.cache['phase_state']['current_index']]
         self.cache['phase_state']['iterations'][phase_key] += 1
 
-        if not self.multi_iterations[phase_key]:
+        if not self.multi_iterations[phase_key] or jump_phase:
             if self.cache['phase_state']['current_index'] < len(self.phases) - 1:
                 self.cache['phase_state']['current_index'] += 1
 

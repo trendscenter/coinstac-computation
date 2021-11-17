@@ -10,24 +10,30 @@ class COINSTACPyNode:
     def __init__(self, mode: str, debug=False):
         self.out = {}
         self.cache = {}
-        self.input = {}
         self._mode = mode.upper()
         self._pipeline = _PhasePipeline(self._mode, self.cache)
-        self._debug = debug
+        self.debug = debug
+        self.logs = {}
 
         assert self._mode in COINSTACPyNode._VALID_MODES_, f"Not a valid node name: {self._mode}"
 
     def add_phase(self, phase_cls, multi_iterations=False):
         self._pipeline.add_phase(phase_cls, multi_iterations)
 
-    def log(self, key='', **kw):
-        for k, v in kw.items():
-            print(f"\n{key} ### {self._mode} {k}: ", v)
-            print("-" * 20)
+    def print_logs(self):
+        for k, v in self.logs.items():
+            print(f"{'-' * 3}{k.upper()}{'-' * 50}")
+            for k1, v1 in v.items():
+                print(f"\t{k1} : {v1}")
+        print()
 
     def compute(self, data):
-        if self._debug:
-            self.log('... pre ...', cache=self.cache, input=data['input'])
+        if self.debug:
+            self.logs['cache'] = {}
+            self.logs['cache']['*** pre ***'] = {**self.cache}
+
+            self.logs['input'] = {}
+            self.logs['input']['*** pre ***'] = {**data}
 
         if not self.cache.get('input_args'):
             """
@@ -36,18 +42,29 @@ class COINSTACPyNode:
             """
             self.cache['input_args'] = {**data['input']}
 
-        self.cache['phase_key'] = self._pipeline.next_phase()
+        phase_key = self.cache.get('next_phase', self._pipeline.next_phase())
 
-        phase = self._pipeline.phases[self.cache['phase_key']](
-            self.cache['phase_key'], self.cache, data['input'], data['state']
+        phase = self._pipeline.phases[phase_key](
+            phase_key,
+            self.cache, data['input'], data['state']
         )
+
         phase_out = phase.compute()
         self.out.update(**phase_out)
+        self.cache['next_phase'] = self._pipeline.next_phase(
+            phase_out.get('jump_to_next', False)
+        )
 
-        output = {"output": self.out, 'success': phase_out.get('success')}
+        output = {
+            "output": self.out,
+            'success': self._mode == 'REMOTE' and phase_out.get('success')
+        }
 
-        if self._debug:
-            self.log('*** post ***', cache=self.cache, input=data['input'])
+        if self.debug:
+            self.logs['cache']['### post ###'] = {**self.cache}
+            self.logs['output'] = {'### post ###': {**output}}
+            self.print_logs()
+
         return output
 
     def to_stdout(self):

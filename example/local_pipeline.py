@@ -21,6 +21,3 @@ class PhaseSaveResult(ComputationPhase):
 local = COINSTACPyNode(mode='local', debug=True)
 local.add_phase(PhaseLoadData)
 local.add_phase(PhaseSaveResult)
-
-if __name__ == "__main__":
-    local.to_stdout()

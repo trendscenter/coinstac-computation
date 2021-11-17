@@ -1,4 +1,4 @@
-from coinstac_computation import COINSTACPyNode, ComputationPhase
+from coinstac_computation import COINSTACPyNode, ComputationPhase, PhaseEndWithSuccess
 
 
 class PhaseCollectMaxEvenData(ComputationPhase):
@@ -10,14 +10,7 @@ class PhaseCollectMaxEvenData(ComputationPhase):
         return {'aggregated_data': data}
 
 
-class PhaseEnd(ComputationPhase):
-    def compute(self):
-        return {'success': True}
-
-
 remote = COINSTACPyNode(mode='remote', debug=True)
 remote.add_phase(PhaseCollectMaxEvenData)
-remote.add_phase(PhaseEnd)
+remote.add_phase(PhaseEndWithSuccess)
 
-if __name__ == "__main__":
-    remote.to_stdout()
