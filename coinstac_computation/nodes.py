@@ -73,6 +73,7 @@ class COINSTACPyNode:
         Support for the old library.
         """
         data = _json.loads(_sys.stdin.read())
+        self.cache = data.get('cache', {})
         self.compute(data)
         output = {'output': self.out, 'cache': self.cache}
         try:
