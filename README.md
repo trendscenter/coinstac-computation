@@ -1,7 +1,22 @@
 # COINSTAC computations development made easy.
+
+### Express development(see example folder for a use case):
+```
+1. mkdir -p dist
+2. chmod u+x deploy.sh
+3. ./deploy.sh <path to dist folder>
+```
+Where `<path to dist folder>` is a dir in your computation that Dockerfile picks and installs in the container by:
+
+```
+RUN pip install "/computation/dist/$(ls -t1 dist|  head -n 1)"
+```
+
+### Deployment:
 ```
 pip install coinstac-computation
 ```
+
 #### Coinstac base computation framework that supports:
 
 * Multiple computation phases.
@@ -10,7 +25,7 @@ pip install coinstac-computation
 * Super flexible
 
 ## Use case: Gather max even numbers from each site
-
+#### A full working use case is in the example directory where
 * Local sites filters out even number and send to remote.
 * Remote Finds the max for each site and returns to all sites.
 * Sites save final result.
@@ -89,4 +104,13 @@ from local_pipeline import local
 from remote_pipeline import remote
 
 coinstac.start(local.compute, remote.compute)
+```
+#### Note:
+* Must set `debug=False` while deploying.
+* Is backward compaitible to compspecVersion=1(deprecated now):
+  * Add the following snippet at the end of local and remote pipeline scripts.
+  * Use compspecVersion1 format.
+```json
+if __name__ == "__main__":
+    local_node.to_stdout()
 ```
