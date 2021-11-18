@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict as _ODict
 
 
 def check(logic, k, v, kw):
@@ -58,14 +58,14 @@ class PhaseEndWithSuccess(ComputationPhase):
 
 class PhasePipeline:
     def __init__(self, pipeline_id, cache, **kw):
-        self.id = f"PHASE-PIPE:{pipeline_id}"
+        self.id = f"PHASE-PIPELINE:{pipeline_id}"
         self.cache = cache
 
         if not cache.get(self.id):
             self._initialize()
             self.cache[self.id] = True
 
-        self.phases = OrderedDict()
+        self.phases = _ODict()
         self.multi_iterations = {}
 
     def _initialize(self):
@@ -86,7 +86,8 @@ class PhasePipeline:
 
     def next_phase(self, jump_phase=False):
         phase_key = self.phase_ids[self.cache['phase_state']['current_index']]
-        self.cache['phase_state']['iterations'][phase_key] += 1
+        if self.multi_iterations[phase_key] or self.cache['phase_state']['iterations'][phase_key] <= 0:
+            self.cache['phase_state']['iterations'][phase_key] += 1
 
         if not self.multi_iterations[phase_key] or jump_phase:
             if self.cache['phase_state']['current_index'] < len(self.phases) - 1:
