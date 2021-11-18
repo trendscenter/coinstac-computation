@@ -1,8 +1,9 @@
 import json as _json
 import sys as _sys
 import traceback as _tb
+import copy as _copy
 
-from .utils import PhasePipeline as _PhasePipeline
+from .utils import PhasePipeline as _PhasePipeline, FrozenDict as _FrozenDict
 
 
 class COINSTACPyNode:
@@ -24,25 +25,23 @@ class COINSTACPyNode:
         for k, v in self.logs.items():
             print(f"{'-' * 3}{k.upper()}{'-' * 50}")
             for k1, v1 in v.items():
-                print(f"\t{k1} : {v1}")
+                print(f"\t[ {k1} ] -> {v1}")
         print()
 
     def compute(self, data):
         if self.debug:
-            self.logs['cache'] = {}
-            self.logs['cache']['*** pre ***'] = {**self.cache}
-
             self.logs['input'] = {}
-            self.logs['input']['*** pre ***'] = {**data}
+            self.logs['input']['PRE-COMPUTATION '] = _copy.deepcopy(data)
+            self.logs['cache'] = {}
+            self.logs['cache']['PRE-COMPUTATION '] = _copy.deepcopy(self.cache)
 
         if not self.cache.get('input_args'):
-            """
-            Save original input to save any computation arguments if present. 
-            Some multiple iteration computations might need to reuse initial parameters.
-            """
-            self.cache['input_args'] = {**data['input']}
+            """Some multi-iteration computations might need to reuse initial parameters, so save it."""
+            self.cache['input_args'] = _FrozenDict(_copy.deepcopy(data['input']))
 
-        phase_key = self.cache.get('next_phase', self._pipeline.next_phase())
+        phase_key = self.cache.get('next_phase')
+        if not phase_key:
+            phase_key = self._pipeline.next_phase()
 
         phase = self._pipeline.phases[phase_key](
             phase_key,
@@ -63,8 +62,8 @@ class COINSTACPyNode:
         }
 
         if self.debug:
-            self.logs['cache']['### post ###'] = {**self.cache}
-            self.logs['output'] = {'### post ###': {**output}}
+            self.logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self.cache)
+            self.logs['output'] = {'POST-COMPUTATION': _copy.deepcopy(output)}
             self.print_logs()
 
         return output
