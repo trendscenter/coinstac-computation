@@ -1,4 +1,4 @@
-# This workflows will upload a Python Package using Twine when a release is created.
+# This workflows will upload a Python package using Twine when a release is created.
 
 name: build
 
