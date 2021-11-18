@@ -13,4 +13,3 @@ class PhaseCollectMaxEvenData(ComputationPhase):
 remote = COINSTACPyNode(mode='remote', debug=True)
 remote.add_phase(PhaseCollectMaxEvenData)
 remote.add_phase(PhaseEndWithSuccess)
-
