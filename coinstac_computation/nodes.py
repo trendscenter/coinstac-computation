@@ -1,5 +1,6 @@
 import json as _json
 import sys as _sys
+import traceback as _tb
 
 from .utils import PhasePipeline as _PhasePipeline
 
@@ -8,7 +9,6 @@ class COINSTACPyNode:
     _VALID_MODES_ = ['REMOTE', 'LOCAL']
 
     def __init__(self, mode: str, debug=False):
-        self.out = {}
         self.cache = {}
         self._mode = mode.upper()
         self._pipeline = _PhasePipeline(self._mode, self.cache)
@@ -50,13 +50,15 @@ class COINSTACPyNode:
         )
 
         phase_out = phase.compute()
-        self.out.update(**phase_out)
+        if not phase_out:
+            phase_out = {}
+
         self.cache['next_phase'] = self._pipeline.next_phase(
             phase_out.get('jump_to_next', False)
         )
 
         output = {
-            "output": self.out,
+            "output": phase_out,
             'success': self._mode == 'REMOTE' and phase_out.get('success')
         }
 
@@ -73,11 +75,14 @@ class COINSTACPyNode:
         Support for the old library.
         """
         data = _json.loads(_sys.stdin.read())
-        self.cache = data.get('cache', {})
-        self.compute(data)
-        output = {'output': self.out, 'cache': self.cache}
+        if data.get('cache') and len(data['cache']) > 0:
+            self.cache = data['cache']
         try:
+            output = self.compute(data)
+            output['cache'] = self.cache
+
             output = _json.dumps(output)
             _sys.stdout.write(output)
         except Exception as e:
-            raise Exception(f"Error parsing Json at {data['state']['clientId']} {e}:\n", output)
+            _tb.print_exc()
+            raise Exception(f"{data['state']['clientId']} error {e} ***")

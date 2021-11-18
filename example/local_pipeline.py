@@ -15,7 +15,6 @@ class PhaseSaveResult(ComputationPhase):
     def compute(self):
         with open(f"{self.state['outputDirectory'] + os.sep + 'results.txt'}", 'w') as out:
             out.write(f"{self.input['aggregated_data']}")
-        return {'success': True}
 
 
 local = COINSTACPyNode(mode='local', debug=True)
