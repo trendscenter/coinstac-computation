@@ -9,7 +9,7 @@
 
 ### Deployment:
 ```
-pip install coinstac-computation
+pip install coinstac-computation (or add to requirements.txt file)
 ```
 
 #### Coinstac base computation framework that supports:
