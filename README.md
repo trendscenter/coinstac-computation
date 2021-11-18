@@ -2,14 +2,9 @@
 
 ### Express development(see example folder for a use case):
 ```
-1. mkdir -p dist
-2. chmod u+x deploy.sh
-3. ./deploy.sh <path to dist folder>
-```
-Where `<path to dist folder>` is a dir in your computation that Dockerfile picks and installs in the container by:
-
-```
-RUN pip install "/computation/dist/$(ls -t1 dist|  head -n 1)"
+1. mkdir -p example/dist
+2. chmod u+x deploy.sh #(Needed only once)
+3. ./deploy.sh example/dist
 ```
 
 ### Deployment:
