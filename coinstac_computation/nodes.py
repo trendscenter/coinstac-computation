@@ -25,7 +25,7 @@ class COINSTACPyNode:
     def print_logs(self):
         print()
         for k, v in self._logs.items():
-            print(f"{'-' * 3}[{k.upper()}]{'-' * 50}")
+            print(f"[{k.upper()}]{'-' * 51}")
             for k1, v1 in v.items():
                 print(f"\t[ {k1} ] -> {v1}")
 
