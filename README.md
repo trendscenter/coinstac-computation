@@ -1,5 +1,10 @@
 # COINSTAC computations development made easy.
 
+
+![PyPi version](https://img.shields.io/pypi/v/coinstac-computation)
+[![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
+![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
+
 ### Express development(see example folder for a use case):
 ```
 1. mkdir -p example/dist
