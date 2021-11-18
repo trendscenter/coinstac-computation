@@ -63,19 +63,19 @@ class PhasePipeline:
 
         if not cache.get(self.id):
             self._initialize()
-            self.cache[self.id] = True
+            self.cache[self.id] = {'index': 0, 'iterations': {}}
 
         self.phases = _ODict()
         self.multi_iterations = {}
 
     def _initialize(self):
         """Runs only once"""
-        self.cache['phase_state'] = {'current_index': 0, 'iterations': {}}
+        pass
 
     def add_phase(self, phase_cls, multi_iterations=False):
         self.phases[phase_cls.__name__] = phase_cls
         self.multi_iterations[phase_cls.__name__] = multi_iterations
-        self.cache['phase_state']['iterations'][phase_cls.__name__] = 0
+        self.cache[self.id]['iterations'][phase_cls.__name__] = 0
 
     def __len__(self):
         return len(self.phases)
@@ -85,13 +85,13 @@ class PhasePipeline:
         return list(self.phases.keys())
 
     def next_phase(self, jump_phase=False):
-        phase_key = self.phase_ids[self.cache['phase_state']['current_index']]
-        if self.multi_iterations[phase_key] or self.cache['phase_state']['iterations'][phase_key] <= 0:
-            self.cache['phase_state']['iterations'][phase_key] += 1
+        phase_key = self.phase_ids[self.cache[self.id]['index']]
+        if self.multi_iterations[phase_key] or self.cache[self.id]['iterations'][phase_key] <= 0:
+            self.cache[self.id]['iterations'][phase_key] += 1
 
         if not self.multi_iterations[phase_key] or jump_phase:
-            if self.cache['phase_state']['current_index'] < len(self.phases) - 1:
-                self.cache['phase_state']['current_index'] += 1
+            if self.cache[self.id]['index'] < len(self.phases) - 1:
+                self.cache[self.id]['index'] += 1
 
         return phase_key
 

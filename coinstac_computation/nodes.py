@@ -1,9 +1,9 @@
+import copy as _copy
 import json as _json
 import sys as _sys
 import traceback as _tb
-import copy as _copy
 
-from .utils import PhasePipeline as _PhasePipeline, FrozenDict as _FrozenDict
+import coinstac_computation.utils as _utils
 
 
 class COINSTACPyNode:
@@ -12,32 +12,33 @@ class COINSTACPyNode:
     def __init__(self, mode: str, debug=False):
         self.cache = {}
         self._mode = mode.upper()
-        self._pipeline = _PhasePipeline(self._mode, self.cache)
+        self._pipeline = _utils.PhasePipeline(self._mode, self.cache)
         self.debug = debug
-        self.logs = {}
+        self._logs = {}
 
-        assert self._mode in COINSTACPyNode._VALID_MODES_, f"Not a valid node name: {self._mode}"
+        assert self._mode in COINSTACPyNode._VALID_MODES_, \
+            f"Invalid mode : {self._mode}, Use one of: {COINSTACPyNode._VALID_MODES_}"
 
     def add_phase(self, phase_cls, multi_iterations=False):
         self._pipeline.add_phase(phase_cls, multi_iterations)
 
     def print_logs(self):
-        for k, v in self.logs.items():
-            print(f"{'-' * 3}{k.upper()}{'-' * 50}")
+        for k, v in self._logs.items():
+            print(f"{'-' * 3}[{k.upper()}]{'-' * 50}")
             for k1, v1 in v.items():
                 print(f"\t[ {k1} ] -> {v1}")
         print()
 
     def compute(self, data):
         if self.debug:
-            self.logs['input'] = {}
-            self.logs['input']['PRE-COMPUTATION '] = _copy.deepcopy(data)
-            self.logs['cache'] = {}
-            self.logs['cache']['PRE-COMPUTATION '] = _copy.deepcopy(self.cache)
+            self._logs['input'] = {}
+            self._logs['input']['PRE-COMPUTATION '] = _copy.deepcopy(data)
+            self._logs['cache'] = {}
+            self._logs['cache']['PRE-COMPUTATION '] = _copy.deepcopy(self.cache)
 
         if not self.cache.get('input_args'):
             """Some multi-iteration computations might need to reuse initial parameters, so save it."""
-            self.cache['input_args'] = _FrozenDict(_copy.deepcopy(data['input']))
+            self.cache['input_args'] = _utils.FrozenDict(_copy.deepcopy(data['input']))
 
         phase_key = self.cache.get('next_phase')
         if not phase_key:
@@ -56,30 +57,29 @@ class COINSTACPyNode:
             phase_out.get('jump_to_next', False)
         )
 
-        output = {
-            "output": phase_out,
-            'success': self._mode == 'REMOTE' and phase_out.get('success')
-        }
+        output = {"output": phase_out}
+
+        if self._mode == 'REMOTE':
+            output['success'] = phase_out.get('success', False)
 
         if self.debug:
-            self.logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self.cache)
-            self.logs['output'] = {'POST-COMPUTATION': _copy.deepcopy(output)}
+            self._logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self.cache)
+            self._logs['output'] = {'POST-COMPUTATION': _copy.deepcopy(output)}
             self.print_logs()
 
         return output
 
     def to_stdout(self):
         """
-        Deprecated.
-        Support for the old library.
+        Backward compatibility for the old library. Deprecated now.
         """
         data = _json.loads(_sys.stdin.read())
         if data.get('cache') and len(data['cache']) > 0:
             self.cache = data['cache']
         try:
+            self.debug = False
             output = self.compute(data)
             output['cache'] = self.cache
-
             output = _json.dumps(output)
             _sys.stdout.write(output)
         except Exception as e:
