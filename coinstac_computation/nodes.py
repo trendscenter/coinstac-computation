@@ -23,13 +23,14 @@ class COINSTACPyNode:
         self._pipeline.add_phase(phase_cls, multi_iterations)
 
     def print_logs(self):
+        print()
         for k, v in self._logs.items():
-            print(f"{'-' * 3}[{k.upper()}]{'-' * 50}")
+            print(f"[{k.upper()}]{'-' * 51}")
             for k1, v1 in v.items():
                 print(f"\t[ {k1} ] -> {v1}")
-        print()
 
     def compute(self, data):
+        out = {}
         if self.debug:
             self._logs['input'] = {}
             self._logs['input']['PRE-COMPUTATION '] = _copy.deepcopy(data)
@@ -49,18 +50,21 @@ class COINSTACPyNode:
             self.cache, data['input'], data['state']
         )
 
-        phase_out = phase.compute()
-        if not phase_out:
-            phase_out = {}
+        try:
+            _out = phase.compute()
+            if _out:
+                out.update(**_out)
+        except:
+            raise RuntimeError(f"ERROR! in Phase: *** {phase_key} ***")
 
         self.cache['next_phase'] = self._pipeline.next_phase(
-            phase_out.get('jump_to_next', False)
+            out.get('jump_to_next', False)
         )
 
-        output = {"output": phase_out}
+        output = {"output": out}
 
         if self._mode == 'REMOTE':
-            output['success'] = phase_out.get('success', False)
+            output['success'] = out.get('success', False)
 
         if self.debug:
             self._logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self.cache)
