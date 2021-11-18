@@ -118,10 +118,10 @@ docker build -t base . && coinstac-simulator
   * Use compspecVersion1 format.
 ```python
 if __name__ == "__main__":
-    local_node.to_stdout()
-
+    local.debug = False
+    local.to_stdout()
 ```
-#### Specify a phase that needs to be run multiple inerations as:
+#### Specify a phase that needs to be run multiple iterations as:
 ```python
 remote.add_phase(SomeIterativePhase, multi_iterations=True)
 ```
