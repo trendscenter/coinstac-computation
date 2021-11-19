@@ -28,7 +28,7 @@ pip install coinstac-computation (or add to requirements.txt file)
 ## Example: Gather max even numbers from each site
 #### A full working use case is in the example directory where
 * Local sites filters out even numbers and sends to the remote.
-* Remote finds the max across sites and returns the final result to each of the sites .
+* Remote finds the max across sites and returns the final result to each of the sites.
 * Sites save final result.
 
 #### inputspec.json data:
@@ -114,7 +114,7 @@ docker build -t base . && coinstac-simulator
 
 <hr />
 
-### Extras:
+### Development note:
 * Must set `debug=False` while deploying.
 * Backward compatible to the older library(compspecVersion=1):
   * Add the following snippet at the end of local and remote pipeline scripts.
@@ -124,6 +124,7 @@ docker build -t base . && coinstac-simulator
   ```
   * Use [version 1.0](./examples/basic/compspecv1.json) compspec format.
   * Comment out line `CMD ["python", "entry.py"]` in the `Dockerfile`.
+  * You can also use a **remote debugger** in pycharm as [here](https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html#remote-debug-config).
 
 <hr />
 
@@ -132,4 +133,4 @@ docker build -t base . && coinstac-simulator
 * Remote gathers the votes and returns the final voting result at the end.
 * Sites save the final result.
 
-####Thanks!
+### Thanks!
