@@ -1,4 +1,9 @@
 # COINSTAC computations development made easy.
+#### A very intuitive wrapper for writing coinstac based computations with:
+
+* Break down your computations in simple phases with automatic transition between phases.
+* Add as many phases you want.
+* Even run phases that needs to be run multiple rounds of iterations.
 
 
 ![PyPi version](https://img.shields.io/pypi/v/coinstac-computation)
@@ -18,12 +23,6 @@ chmod u+x deploy.sh                 --- Needed only once -------
 ```
 pip install coinstac-computation (or add to requirements.txt file)
 ```
-
-#### Coinstac base computation framework that supports:
-
-* Multiple computation phases.
-* Multiple iterations per phase.
-* Automatic phase transition.
 
 ## Example: Gather max even numbers from each site
 #### A full working use case is in the [examples/basic](./examples/basic) directory where:
