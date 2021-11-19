@@ -114,7 +114,38 @@ docker build -t base . && coinstac-simulator
 
 <hr />
 
-### Development note:
+### Advanced use case: Phases with multiple iterations.
+#### Overview:
+
+1. Specify a phase as multi-iterations:
+```python
+local.add_phase(SomeIterativePhase, multi_iterations=True)
+```
+
+2. Specify when to end the iterative phase as:
+
+```python
+class SomeIterativePhase(ComputationPhase):
+    def compute(self):
+        """Do all the stuff"""
+        
+        """Check if the iterative phase is done, and send a phase jump signal."""
+        should_jump_to_next_phase = ... 
+        return {..., 'jump_to_next': should_jump_to_next_phase}
+```
+
+####  Full working [example](./examples/multi_iterations) where:
+* Each sites cast a vote for multiple(default=51) times.
+* Remote gathers the votes and returns the final voting result at the end.
+* Sites save the final result.
+
+<hr />
+ 
+### Development notes:
+* Make sure you have:
+  * **docker** installed and running.
+  * **nodejs** installed.
+  * **coinstac-simulator** package installed. `npm install --global coinstac-simulator`
 * Must set `debug=False` while deploying.
 * Backward compatible to the older library(compspecVersion=1):
   * Add the following snippet at the end of local and remote pipeline scripts.
@@ -126,11 +157,5 @@ docker build -t base . && coinstac-simulator
   * Comment out line `CMD ["python", "entry.py"]` in the `Dockerfile`.
   * You can also use a **remote debugger** in pycharm as [here](https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html#remote-debug-config).
 
-<hr />
-
-### Advanced use case: Phases with multiple iterations [example](./examples/multi_iterations)
-* Where each site cast a vote for multiple(default=51) times.
-* Remote gathers the votes and returns the final voting result at the end.
-* Sites save the final result.
 
 ### Thanks!
