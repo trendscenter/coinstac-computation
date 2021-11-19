@@ -5,7 +5,7 @@
 [![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 
-### Express development(see example folder for a use case):
+### Express development(see examples/basic folder for a simple case):
 ```
 1. mkdir -p example/dist
 2. chmod u+x deploy.sh #(Needed only once)
@@ -23,10 +23,10 @@ pip install coinstac-computation (or add to requirements.txt file)
 * Multiple iterations per phase.
 * Automatic phase transition.
 
-## Use case: Gather max even numbers from each site
+## Example: Gather max even numbers from each site
 #### A full working use case is in the example directory where
-* Local sites filters out even number and send to remote.
-* Remote Finds the max for each site and returns to all sites.
+* Local sites filters out even numbers and sends to the remote.
+* Remote finds the max across sites and returns the final result to each of the sites .
 * Sites save final result.
 
 #### inputspec.json data:
@@ -93,7 +93,7 @@ remote.add_phase(PhaseCollectMaxEvenData)
 remote.add_phase(PhaseEndWithSuccess)
 ```
 
-### Entry point
+### Entry point:
 
 ```python
 import coinstac
@@ -103,7 +103,6 @@ from remote_pipeline import remote
 
 coinstac.start(local.compute, remote.compute)
 ```
-<hr />
 
 ### Run
 ```
@@ -111,16 +110,21 @@ cd example
 docker build -t base . && coinstac-simulator
 ```
 
+<hr />
+
 #### Extras:
 * Must set `debug=False` while deploying.
-* Is backward compaitible to compspecVersion=1(deprecated now):
+* Backward compatible to the older library(compspecVersion=1):
   * Add the following snippet at the end of local and remote pipeline scripts.
-  * Use compspecVersion1 format.
-```python
-if __name__ == "__main__":
-    local.to_stdout()
-```
-#### Specify a phase that needs to be run multiple iterations as:
+  ```python
+  if __name__ == "__main__":
+      local.to_stdout()
+  ```
+  * Comment out CMD `["python", "entry.py"]` in the `Dockerfile`.
+
+
+### Advanced use case:
+* See multi iteration [example](./examples/multi_iterations)
 ```python
 remote.add_phase(SomeIterativePhase, multi_iterations=True)
 ```
