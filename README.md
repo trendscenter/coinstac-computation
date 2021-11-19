@@ -6,10 +6,12 @@
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 
 ### Express development(see examples/basic folder for a simple case):
+Commands:
 ```
-1. mkdir -p example/dist
-2. chmod u+x deploy.sh #(Needed only once)
-3. ./deploy.sh example/dist
+mkdir -p examples/basic/dist        --- Needed only once -------
+chmod u+x deploy.sh                 --- Needed only once -------
+
+./deploy.sh examples/basic/dist     --- Needed everytime you make some changes -------
 ```
 
 ### Deployment:
@@ -104,7 +106,7 @@ from remote_pipeline import remote
 coinstac.start(local.compute, remote.compute)
 ```
 
-### Run
+### Run:
 ```
 cd example
 docker build -t base . && coinstac-simulator
@@ -112,7 +114,7 @@ docker build -t base . && coinstac-simulator
 
 <hr />
 
-#### Extras:
+### Extras:
 * Must set `debug=False` while deploying.
 * Backward compatible to the older library(compspecVersion=1):
   * Add the following snippet at the end of local and remote pipeline scripts.
@@ -120,23 +122,14 @@ docker build -t base . && coinstac-simulator
   if __name__ == "__main__":
       local.to_stdout()
   ```
-  * Comment out CMD `["python", "entry.py"]` in the `Dockerfile`.
+  * Use [version 1.0](./examples/basic/compspecv1.json) compspec format.
+  * Comment out line `CMD ["python", "entry.py"]` in the `Dockerfile`.
 
+<hr />
 
-### Advanced use case:
-* See multi iteration [example](./examples/multi_iterations)
-```python
-remote.add_phase(SomeIterativePhase, multi_iterations=True)
-```
-and to stop, just return jump_to_next=True as:
-```python
-class SomeIterativePhase(ComputationPhase):
-    def compute(self):
-        """All your stuff here..."""
-        
-        """check if you are done with this phase 
-            and want to jump to the next.
-        """
-        should_jump:bool = ... 
-        return {..., 'jump_to_next':should_jump}
-```
+### Advanced use case: Phases with multiple iterations [example](./examples/multi_iterations)
+* Where each site cast a vote for multiple(default=51) times.
+* Remote gathers the votes and returns the final voting result at the end.
+* Sites save the final result.
+
+####Thanks!
