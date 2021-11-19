@@ -13,6 +13,8 @@
 #### Installation: `pip install coinstac-computation`
 #### Add entry `coinstac-computation` to the requirements.txt.
 
+<hr />
+
 <!---
 ### Only for this framework's express development:
 Commands:
