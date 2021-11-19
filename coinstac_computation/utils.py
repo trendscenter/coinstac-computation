@@ -36,6 +36,9 @@ class ComputationPhase:
         self.input = input
         self.state = state
 
+        "Cached default input obtained from inputspec.json file to reuse during multiple iterations"
+        self.input_args = cache['input_args']
+
         if not self.cache.get(self.id):
             self._initialize()
             self.cache[self.id] = True
@@ -58,19 +61,18 @@ class PhaseEndWithSuccess(ComputationPhase):
 
 class PhasePipeline:
     def __init__(self, pipeline_id, cache, **kw):
-        self.id = f"PHASE-PIPELINE:{pipeline_id}"
+        self.id = f"PIPELINE:{pipeline_id}"
         self.cache = cache
 
         if not cache.get(self.id):
             self._initialize()
-            self.cache[self.id] = {'index': 0, 'iterations': {}}
 
         self.phases = _ODict()
         self.multi_iterations = {}
 
     def _initialize(self):
         """Runs only once"""
-        pass
+        self.cache[self.id] = {'index': 0, 'iterations': {}}
 
     def add_phase(self, phase_cls, multi_iterations=False):
         self.phases[phase_cls.__name__] = phase_cls
@@ -85,15 +87,16 @@ class PhasePipeline:
         return list(self.phases.keys())
 
     def next_phase(self, jump_phase=False):
-        phase_key = self.phase_ids[self.cache[self.id]['index']]
-        if self.multi_iterations[phase_key] or self.cache[self.id]['iterations'][phase_key] <= 0:
-            self.cache[self.id]['iterations'][phase_key] += 1
+        current_phase_key = self.phase_ids[self.cache[self.id]['index']]
 
-        if not self.multi_iterations[phase_key] or jump_phase:
+        _is_single_iteration_phase = not self.multi_iterations[current_phase_key]
+        if jump_phase or _is_single_iteration_phase:
             if self.cache[self.id]['index'] < len(self.phases) - 1:
                 self.cache[self.id]['index'] += 1
+        else:
+            self.cache[self.id]['iterations'][current_phase_key] += 1
 
-        return phase_key
+        return self.phase_ids[self.cache[self.id]['index']]
 
     def __str__(self):
         return [f"{id}" for id in self.phases]

@@ -1,0 +1,22 @@
+[
+  {
+    "data_source": {
+      "value": "data_file.txt"
+    }
+  },
+  {
+    "data_source": {
+      "value": "data_file.txt"
+    }
+  },
+  {
+    "data_source": {
+      "value": "data_file.txt"
+    }
+  },
+  {
+    "data_source": {
+      "value": "data_file.txt"
+    }
+  }
+]

@@ -10,11 +10,11 @@ class COINSTACPyNode:
     _VALID_MODES_ = ['REMOTE', 'LOCAL']
 
     def __init__(self, mode: str, debug=False):
-        self.cache = {}
+        self._cache = {}
         self._mode = mode.upper()
-        self._pipeline = _utils.PhasePipeline(self._mode, self.cache)
-        self.debug = debug
         self._logs = {}
+        self._debug = debug
+        self._pipeline = _utils.PhasePipeline(self._mode, self._cache)
 
         assert self._mode in COINSTACPyNode._VALID_MODES_, \
             f"Invalid mode : {self._mode}, Use one of: {COINSTACPyNode._VALID_MODES_}"
@@ -22,7 +22,7 @@ class COINSTACPyNode:
     def add_phase(self, phase_cls, multi_iterations=False):
         self._pipeline.add_phase(phase_cls, multi_iterations)
 
-    def print_logs(self):
+    def _print_logs(self):
         print()
         for k, v in self._logs.items():
             print(f"[{k.upper()}]{'-' * 51}")
@@ -31,23 +31,23 @@ class COINSTACPyNode:
 
     def compute(self, data):
         out = {}
-        if self.debug:
+        if self._debug:
             self._logs['input'] = {}
             self._logs['input']['PRE-COMPUTATION '] = _copy.deepcopy(data)
             self._logs['cache'] = {}
-            self._logs['cache']['PRE-COMPUTATION '] = _copy.deepcopy(self.cache)
+            self._logs['cache']['PRE-COMPUTATION '] = _copy.deepcopy(self._cache)
 
-        if not self.cache.get('input_args'):
+        if not self._cache.get('input_args'):
             """Some multi-iteration computations might need to reuse initial parameters, so save it."""
-            self.cache['input_args'] = _utils.FrozenDict(_copy.deepcopy(data['input']))
+            self._cache['input_args'] = _utils.FrozenDict(_copy.deepcopy(data['input']))
 
-        phase_key = self.cache.get('next_phase')
+        phase_key = self._cache.get('next_phase')
         if not phase_key:
             phase_key = self._pipeline.next_phase()
 
         phase = self._pipeline.phases[phase_key](
             phase_key,
-            self.cache, data['input'], data['state']
+            self._cache, data['input'], data['state']
         )
 
         try:
@@ -57,19 +57,19 @@ class COINSTACPyNode:
         except:
             raise RuntimeError(f"ERROR! in Phase: *** {phase_key} ***")
 
-        self.cache['next_phase'] = self._pipeline.next_phase(
-            out.get('jump_to_next', False)
-        )
-
         output = {"output": out}
 
         if self._mode == 'REMOTE':
             output['success'] = out.get('success', False)
 
-        if self.debug:
-            self._logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self.cache)
+        self._cache['next_phase'] = self._pipeline.next_phase(
+            out.get('jump_to_next', False)
+        )
+
+        if self._debug:
+            self._logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self._cache)
             self._logs['output'] = {'POST-COMPUTATION': _copy.deepcopy(output)}
-            self.print_logs()
+            self._print_logs()
 
         return output
 
@@ -78,14 +78,16 @@ class COINSTACPyNode:
         Backward compatibility for the old library. Deprecated now.
         """
         data = _json.loads(_sys.stdin.read())
+        output = {}
         if data.get('cache') and len(data['cache']) > 0:
-            self.cache = data['cache']
+            self._cache = data['cache']
+            self._pipeline.cache = data['cache']
         try:
-            self.debug = False
+            self._debug = False
             output = self.compute(data)
-            output['cache'] = self.cache
+            output['cache'] = self._cache
             output = _json.dumps(output)
             _sys.stdout.write(output)
         except Exception as e:
             _tb.print_exc()
-            raise Exception(f"{data['state']['clientId']} error {e} ***")
+            raise Exception(f"{data['state']['clientId']} error {e} \n ### Output: {output} ***")
