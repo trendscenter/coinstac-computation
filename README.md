@@ -20,9 +20,8 @@ chmod u+x deploy.sh                 --- Needed only once -------
 ```
 
 ### Deployment:
-```
-pip install coinstac-computation (or add to requirements.txt file)
-```
+* Add entry `coinstac-computation` to requirements.txt.
+* Comment out `RUN pip install "/computation/dist/$(ls -t1 dist|  head -n 1)"` in Dockerfile.
 
 ## Example: Gather max even numbers from each site
 #### A full working use case is in the [examples/basic](./examples/basic) directory where:
