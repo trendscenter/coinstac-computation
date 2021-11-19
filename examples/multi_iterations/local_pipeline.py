@@ -2,9 +2,9 @@ import os
 import json
 from coinstac_computation import COINSTACPyNode, ComputationPhase
 
-import pydevd_pycharm
-
-pydevd_pycharm.settrace('172.17.0.1', port=8881, stdoutToServer=True, stderrToServer=True)
+# import pydevd_pycharm
+#
+# pydevd_pycharm.settrace('172.17.0.1', port=8881, stdoutToServer=True, stderrToServer=True)
 
 
 class PhaseSubmitVote(ComputationPhase):
@@ -14,7 +14,7 @@ class PhaseSubmitVote(ComputationPhase):
         self.cache['data'] = []
         for line in open(self.state['baseDirectory'] + os.sep + self.input_args['data_source']).readlines():
             self.cache['data'].append(float(line.strip()))
-        self.cache['data'] = self.cache['data'][:5]
+        self.cache['data'] = self.cache['data']
 
     def compute(self):
         out = {
@@ -27,7 +27,7 @@ class PhaseSubmitVote(ComputationPhase):
 
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
-        with open(f"{self.state['outputDirectory'] + os.sep + 'voe_results.txt'}", 'w') as out:
+        with open(f"{self.state['outputDirectory'] + os.sep + 'voe_results.json'}", 'w') as out:
             json.dump(self.input['vote_result'], out)
 
 

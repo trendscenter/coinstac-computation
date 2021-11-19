@@ -1,9 +1,9 @@
 from coinstac_computation import COINSTACPyNode, ComputationPhase, PhaseEndWithSuccess, utils
 import numpy as np
 
-import pydevd_pycharm
-
-pydevd_pycharm.settrace('172.17.0.1', port=8881, stdoutToServer=True, stderrToServer=True)
+# import pydevd_pycharm
+#
+# pydevd_pycharm.settrace('172.17.0.1', port=8881, stdoutToServer=True, stderrToServer=True)
 
 
 class PhaseCollectVote(ComputationPhase):

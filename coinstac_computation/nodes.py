@@ -81,7 +81,7 @@ class COINSTACPyNode:
         output = {}
         if data.get('cache') and len(data['cache']) > 0:
             self._cache = data['cache']
-            self._pipeline.cache = data['cache']
+            self._pipeline.cache = self._cache
         try:
             self._debug = False
             output = self.compute(data)

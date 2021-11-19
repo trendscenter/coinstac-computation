@@ -93,9 +93,8 @@ class PhasePipeline:
         if jump_phase or _is_single_iteration_phase:
             if self.cache[self.id]['index'] < len(self.phases) - 1:
                 self.cache[self.id]['index'] += 1
-        else:
-            self.cache[self.id]['iterations'][current_phase_key] += 1
 
+        self.cache[self.id]['iterations'][self.phase_ids[self.cache[self.id]['index']]] += 1
         return self.phase_ids[self.cache[self.id]['index']]
 
     def __str__(self):
