@@ -5,7 +5,7 @@
 [![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 
-### Express development(see examples/basic folder for a simple case):
+### Express development(see [examples](./examples/basic) folder for a simple case):
 Commands:
 ```
 mkdir -p examples/basic/dist        --- Needed only once -------
