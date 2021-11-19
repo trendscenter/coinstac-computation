@@ -5,7 +5,7 @@
 [![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 
-### Express development(see [examples/basic](./examples/basic) folder for a simple use case):
+### Express development(see [examples](./examples/basic) folder for a simple use case):
 Commands:
 ```
 mkdir -p examples/basic/dist        --- Needed only once -------
@@ -26,7 +26,7 @@ pip install coinstac-computation (or add to requirements.txt file)
 * Automatic phase transition.
 
 ## Example: Gather max even numbers from each site
-#### A full working use case is in the example directory where
+#### A full working use case is in the [examples/basic](./examples/basic) directory where:
 * Local sites filters out even numbers and sends to the remote.
 * Remote finds the max across sites and returns the final result to each of the sites.
 * Sites save final result.
