@@ -1,16 +1,20 @@
 # COINSTAC computations development made easy.
+
+![PyPi version](https://img.shields.io/pypi/v/coinstac-computation)
+[![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
+![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
+
 #### A very intuitive wrapper for writing coinstac based computations with:
 
 * Break down your computations in simple phases with automatic transition between phases.
 * Add as many phases you want.
 * Even run phases that needs to be run multiple rounds of iterations.
 
+#### Installation: `pip install coinstac-computation`
+#### Add entry `coinstac-computation` to the requirements.txt.
 
-![PyPi version](https://img.shields.io/pypi/v/coinstac-computation)
-[![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
-![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
-
-### Express development(see [examples](./examples/basic) folder for a simple use case):
+<!---
+### Only for this framework's express development:
 Commands:
 ```
 mkdir -p examples/basic/dist        --- Needed only once -------
@@ -18,12 +22,10 @@ chmod u+x deploy.sh                 --- Needed only once -------
 
 ./deploy.sh examples/basic/dist     --- Needed everytime you make some changes -------
 ```
+--->
 
-### Deployment:
-* Add entry `coinstac-computation` to requirements.txt.
-* Comment out `RUN pip install "/computation/dist/$(ls -t1 dist|  head -n 1)"` in Dockerfile.
 
-## Example: Gather max even numbers from each site
+### Example: Gather max even numbers from each site
 #### A full working use case is in the [examples/basic](./examples/basic) directory where:
 * Local sites filters out even numbers and sends to the remote.
 * Remote finds the max across sites and returns the final result to each of the sites.
