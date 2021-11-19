@@ -1,7 +1,7 @@
 FROM coinstacteam/coinstac-base:python3.7-buster
 
 # Copy the current directory contents into the container
-COPY ./requirements.txt /computation/requirements.txt
+COPY requirements.txt /computation/requirements.txt
 
 # Set the working directory
 WORKDIR /computation

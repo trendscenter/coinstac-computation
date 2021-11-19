@@ -5,11 +5,13 @@
 [![YourActionName Actions Status](https://github.com/trendscenter/coinstac-computation/workflows/build/badge.svg)](https://github.com/trendscenter/coinstac-computation/actions)
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 
-### Express development(see example folder for a use case):
+### Express development(see [examples/basic](./examples/basic) folder for a simple use case):
+Commands:
 ```
-1. mkdir -p example/dist
-2. chmod u+x deploy.sh #(Needed only once)
-3. ./deploy.sh example/dist
+mkdir -p examples/basic/dist        --- Needed only once -------
+chmod u+x deploy.sh                 --- Needed only once -------
+
+./deploy.sh examples/basic/dist     --- Needed everytime you make some changes -------
 ```
 
 ### Deployment:
@@ -23,10 +25,10 @@ pip install coinstac-computation (or add to requirements.txt file)
 * Multiple iterations per phase.
 * Automatic phase transition.
 
-## Use case: Gather max even numbers from each site
+## Example: Gather max even numbers from each site
 #### A full working use case is in the example directory where
-* Local sites filters out even number and send to remote.
-* Remote Finds the max for each site and returns to all sites.
+* Local sites filters out even numbers and sends to the remote.
+* Remote finds the max across sites and returns the final result to each of the sites.
 * Sites save final result.
 
 #### inputspec.json data:
@@ -93,7 +95,7 @@ remote.add_phase(PhaseCollectMaxEvenData)
 remote.add_phase(PhaseEndWithSuccess)
 ```
 
-### Entry point
+### Entry point:
 
 ```python
 import coinstac
@@ -103,36 +105,32 @@ from remote_pipeline import remote
 
 coinstac.start(local.compute, remote.compute)
 ```
-<hr />
 
-### Run
+### Run:
 ```
 cd example
 docker build -t base . && coinstac-simulator
 ```
 
-#### Extras:
+<hr />
+
+### Development note:
 * Must set `debug=False` while deploying.
-* Is backward compaitible to compspecVersion=1(deprecated now):
+* Backward compatible to the older library(compspecVersion=1):
   * Add the following snippet at the end of local and remote pipeline scripts.
-  * Use compspecVersion1 format.
-```python
-if __name__ == "__main__":
-    local.to_stdout()
-```
-#### Specify a phase that needs to be run multiple iterations as:
-```python
-remote.add_phase(SomeIterativePhase, multi_iterations=True)
-```
-and to stop, just return jump_to_next=True as:
-```python
-class SomeIterativePhase(ComputationPhase):
-    def compute(self):
-        """All your stuff here..."""
-        
-        """check if you are done with this phase 
-            and want to jump to the next.
-        """
-        should_jump:bool = ... 
-        return {..., 'jump_to_next':should_jump}
-```
+  ```python
+  if __name__ == "__main__":
+      local.to_stdout()
+  ```
+  * Use [version 1.0](./examples/basic/compspecv1.json) compspec format.
+  * Comment out line `CMD ["python", "entry.py"]` in the `Dockerfile`.
+  * You can also use a **remote debugger** in pycharm as [here](https://www.jetbrains.com/help/pycharm/remote-debugging-with-product.html#remote-debug-config).
+
+<hr />
+
+### Advanced use case: Phases with multiple iterations [example](./examples/multi_iterations)
+* Where each site cast a vote for multiple(default=51) times.
+* Remote gathers the votes and returns the final voting result at the end.
+* Sites save the final result.
+
+### Thanks!
