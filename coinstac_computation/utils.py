@@ -36,8 +36,8 @@ class ComputationPhase:
         self.input = input
         self.state = state
 
-        "Cached default input obtained from inputspec.json file to reuse during multiple iterations"
-        self.input_args = cache['input_args']
+        """Cached default input obtained from inputspec.json file to reuse during multiple iterations"""
+        self.input_args = FrozenDict(cache['input_args'])
 
         if not self.cache.get(self.id):
             self._initialize()
