@@ -116,6 +116,12 @@ docker build -t base . && coinstac-simulator
 <hr />
 
 ### Advanced use case: Phases with multiple iterations.
+
+####  Full working [example](./examples/multi_iterations) where:
+* Each sites cast a vote(number is even) for multiple(default=51) times.
+* Remote gathers the votes and returns the final voting result at the end.
+* Sites save the final result.
+
 #### Overview:
 
 1. Specify when to end the iterative phase with a phase jump signal:
@@ -146,12 +152,6 @@ class PhaseSubmitVote(ComputationPhase):
 ```python
 local.add_phase(PhaseSubmitVote, multi_iterations=True)
 ```
-
-
-####  Full working [example](./examples/multi_iterations) where:
-* Each sites cast a vote(number is even) for multiple(default=51) times.
-* Remote gathers the votes and returns the final voting result at the end.
-* Sites save the final result.
 
 <hr />
  
