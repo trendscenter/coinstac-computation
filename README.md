@@ -115,30 +115,41 @@ docker build -t base . && coinstac-simulator
 
 <hr />
 
-### Advanced use case: Phases with multiple iterations.
-#### Overview:
+## Advanced use case [example](./examples/multi_iterations) with multiple iterations where:
 
-1. Specify a phase as multi-iterations:
-```python
-local.add_phase(SomeIterativePhase, multi_iterations=True)
-```
-
-2. Specify when to end the iterative phase as:
-
-```python
-class SomeIterativePhase(ComputationPhase):
-    def compute(self):
-        """Do all the stuff"""
-        
-        """Check if the iterative phase is done, and send a phase jump signal."""
-        should_jump_to_next_phase = ... 
-        return {..., 'jump_to_next': should_jump_to_next_phase}
-```
-
-####  Full working [example](./examples/multi_iterations) where:
-* Each sites cast a vote for multiple(default=51) times.
+* Each sites cast a vote(number is even) for multiple(default=51) times.
 * Remote gathers the votes and returns the final voting result at the end.
 * Sites save the final result.
+
+#### Overview:
+
+1. Specify when to end the iterative phase with a phase jump signal:
+
+```python
+class PhaseSubmitVote(ComputationPhase):
+
+    def _initialize(self):
+        """This method runs only once"""
+        self.cache['data_index'] = 0
+        self.cache['data'] = []
+        for line in open(self.state['baseDirectory'] + os.sep + self.input_args['data_source']).readlines():
+            self.cache['data'].append(float(line.strip()))
+
+    def compute(self):
+        out = {
+            'vote': self.cache['data'][self.cache['data_index']] % 2 == 0,
+        }
+        self.cache['data_index'] += 1
+        
+        """Send a jump to next phase signal"""
+        out['jump_to_next'] = self.cache['data_index'] > len(self.cache['data']) - 1
+        return out
+```
+
+2. Add the phase as multi-iterations:
+```python
+local.add_phase(PhaseSubmitVote, multi_iterations=True)
+```
 
 <hr />
  
