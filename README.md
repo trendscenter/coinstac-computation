@@ -6,9 +6,9 @@
 
 ### A very intuitive wrapper for writing coinstac based computations:
 
-* Break down your computations in simple phases with automatic transition between phases.
+* Break down your computations into simple phases with automatic transition between phases.
 * Add as many phases as you want.
-* Even run phases that needs to be run multiple _local-remote_ iterations.
+* Even run phases that needs to be run multiple _local-remote_ trips(iterations).
 * Installation: `pip install coinstac-computation`
 * Add entry `coinstac-computation` to the requirements.txt.
 
