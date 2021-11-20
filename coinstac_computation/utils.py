@@ -36,7 +36,7 @@ class ComputationPhase:
         self.input = input
         self.state = state
 
-        "Cached default input obtained from inputspec.json file to reuse during multiple iterations"
+        """Cached default input obtained from inputspec.json file to reuse during multiple iterations"""
         self.input_args = cache['input_args']
 
         if not self.cache.get(self.id):
