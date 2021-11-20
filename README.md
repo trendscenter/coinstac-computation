@@ -120,19 +120,31 @@ docker build -t base . && coinstac-simulator
 
 1. Specify a phase as multi-iterations:
 ```python
-local.add_phase(SomeIterativePhase, multi_iterations=True)
+local.add_phase(PhaseSubmitVote, multi_iterations=True)
 ```
 
 2. Specify when to end the iterative phase as:
 
 ```python
-class SomeIterativePhase(ComputationPhase):
+class PhaseSubmitVote(ComputationPhase):
+
+    def _initialize(self):
+        """This method runs only once"""
+        self.cache['data_index'] = 0
+        self.cache['data'] = []
+        for line in open(self.state['baseDirectory'] + os.sep + self.input_args['data_source']).readlines():
+            self.cache['data'].append(float(line.strip()))
+        self.cache['data'] = self.cache['data']
+
     def compute(self):
-        """Do all the stuff"""
+        out = {
+            'vote': self.cache['data'][self.cache['data_index']] % 2 == 0,
+        }
+        self.cache['data_index'] += 1
         
-        """Check if the iterative phase is done, and send a phase jump signal."""
-        should_jump_to_next_phase = ... 
-        return {..., 'jump_to_next': should_jump_to_next_phase}
+        """Send a jump to next phase signal"""
+        out['jump_to_next'] = self.cache['data_index'] > len(self.cache['data']) - 1
+        return out
 ```
 
 ####  Full working [example](./examples/multi_iterations) where:
