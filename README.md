@@ -115,7 +115,7 @@ docker build -t base . && coinstac-simulator
 
 <hr />
 
-### Advanced use case [example](./examples/multi_iterations) with multiple iterations where:
+## Advanced use case [example](./examples/multi_iterations) with multiple iterations where:
 
 * Each sites cast a vote(number is even) for multiple(default=51) times.
 * Remote gathers the votes and returns the final voting result at the end.
