@@ -14,7 +14,6 @@ class PhaseSubmitVote(ComputationPhase):
         self.cache['data'] = []
         for line in open(self.state['baseDirectory'] + os.sep + self.input_args['data_source']).readlines():
             self.cache['data'].append(float(line.strip()))
-        self.cache['data'] = self.cache['data']
 
     def compute(self):
         out = {
