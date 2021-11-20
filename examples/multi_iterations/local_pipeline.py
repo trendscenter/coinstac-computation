@@ -26,7 +26,7 @@ class PhaseSubmitVote(ComputationPhase):
 
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
-        with open(f"{self.state['outputDirectory'] + os.sep + 'voe_results.json'}", 'w') as out:
+        with open(f"{self.state['outputDirectory'] + os.sep + 'vote_results.json'}", 'w') as out:
             json.dump(self.input['vote_result'], out)
 
 
