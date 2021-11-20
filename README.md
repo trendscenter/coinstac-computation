@@ -8,7 +8,7 @@
 
 * Break down your computations into simple phases with automatic transition between phases.
 * Add as many phases as you want.
-* Even run phases that needs to be run multiple _local-remote_ trips(iterations).
+* Even run phases that needs to be run multiple _local-remote_ trips(iterations). See advanced use case example below.
 * Installation: `pip install coinstac-computation`
 * Add entry `coinstac-computation` to the requirements.txt.
 
@@ -117,8 +117,8 @@ docker build -t base . && coinstac-simulator
 
 ## Advanced use case [example](./examples/multi_iterations) with multiple iterations where:
 
-* Each sites cast a vote(number is even) for multiple(default=51) times.
-* Remote gathers the votes and returns the final voting result at the end.
+* Each sites cast a vote(positive vote if number is even) for multiple(default=51) times.
+* Remote gathers the votes and returns the final voting result to all sites at the end.
 * Sites save the final result.
 
 #### Overview:
