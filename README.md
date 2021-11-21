@@ -109,8 +109,8 @@ coinstac.start(local.compute, remote.compute)
 
 ### Run:
 ```
-cd example
-docker build -t base . && coinstac-simulator
+cd examples/basic/
+~/coinstac-computation/examples/basic/$ docker build -t base . && coinstac-simulator
 ```
 
 <hr />
