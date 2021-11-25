@@ -54,8 +54,8 @@ class COINSTACPyNode:
             _out = phase.compute()
             if _out:
                 out.update(**_out)
-        except:
-            raise RuntimeError(f"ERROR! in Phase: *** {phase_key} ***")
+        except Exception as e:
+            raise RuntimeError(f"ERROR! in Phase: *** {phase_key} *** {e}")
 
         output = {"output": out}
 
@@ -72,6 +72,9 @@ class COINSTACPyNode:
             self._print_logs()
 
         return output
+
+    def __call__(self, *args, **kwargs):
+        return self.compute(*args, **kwargs)
 
     def to_stdout(self):
         """
