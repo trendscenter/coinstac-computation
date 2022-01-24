@@ -41,10 +41,7 @@ class COINSTACPyNode:
             """Some multi-iteration computations might need to reuse initial parameters, so save it."""
             self._cache['input_args'] = _utils.FrozenDict(_copy.deepcopy(data['input']))
 
-        phase_key = self._cache.get('next_phase')
-        if not phase_key:
-            phase_key = self._pipeline.next_phase()
-
+        phase_key = self._cache.setdefault('next_phase', self._pipeline.phase_ids[0])
         phase = self._pipeline.phases[phase_key](
             phase_key,
             self._cache, data['input'], data['state']
