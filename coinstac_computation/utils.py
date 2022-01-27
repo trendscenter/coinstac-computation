@@ -69,14 +69,16 @@ class PhasePipeline:
 
         self.phases = _ODict()
         self.multi_iterations = {}
+        self.local_only = {}
 
     def _initialize(self):
         """Runs only once"""
         self.cache[self.id] = {'index': 0, 'iterations': {}}
 
-    def add_phase(self, phase_cls, multi_iterations=False):
+    def add_phase(self, phase_cls, local_only=False, multi_iterations=False):
         self.phases[phase_cls.__name__] = phase_cls
         self.multi_iterations[phase_cls.__name__] = multi_iterations
+        self.local_only[phase_cls.__name__] = local_only
         self.cache[self.id]['iterations'][phase_cls.__name__] = 0
 
     def __len__(self):

@@ -19,8 +19,17 @@ class COINSTACPyNode:
         assert self._mode in COINSTACPyNode._VALID_MODES_, \
             f"Invalid mode : {self._mode}, Use one of: {COINSTACPyNode._VALID_MODES_}"
 
-    def add_phase(self, phase_cls, multi_iterations=False):
-        self._pipeline.add_phase(phase_cls, multi_iterations)
+    def add_phase(self, phase_cls, local_only=False, multi_iterations=False):
+        """
+        :param phase_cls: Custom implementation of ComputationPhase class
+        :type phase_cls: ComputationPhase
+        :param local_only: This phase will run only locally right after the previous phase is done.
+        :type local_only: bool
+        :param multi_iterations: Specifies if it is a multiple iterations phase.
+        :type multi_iterations: bool
+        Note: It is assumed that a normal(default) computation phase will run one round of local-remote.
+        """
+        self._pipeline.add_phase(phase_cls, local_only, multi_iterations)
 
     def _print_logs(self):
         print()
@@ -56,12 +65,15 @@ class COINSTACPyNode:
 
         output = {"output": out}
 
+        jump_to_next = out.get('jump_to_next', False)
         if self._mode == 'REMOTE':
+            jump_to_next = jump_to_next or _utils.check(all, 'jump_to_next', True, data['input'])
             output['success'] = out.get('success', False)
 
-        self._cache['next_phase'] = self._pipeline.next_phase(
-            out.get('jump_to_next', False)
-        )
+        self._cache['next_phase'] = self._pipeline.next_phase(jump_to_next)
+
+        if self._pipeline.local_only.get(self._cache['next_phase']):
+            output = self.compute(data)
 
         if self._debug:
             self._logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self._cache)
