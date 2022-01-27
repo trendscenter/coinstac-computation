@@ -69,14 +69,26 @@ class PhasePipeline:
 
         self.phases = _ODict()
         self.multi_iterations = {}
+        self.local_only = {}
 
     def _initialize(self):
         """Runs only once"""
         self.cache[self.id] = {'index': 0, 'iterations': {}}
 
-    def add_phase(self, phase_cls, multi_iterations=False):
+    def add_phase(self, phase_cls: ComputationPhase.__class__, local_only: bool = False,
+                  multi_iterations: bool = False):
+        """
+        :param phase_cls: Custom implementation of ComputationPhase class
+        :type phase_cls: ComputationPhase
+        :param local_only: This phase will run only locally right after the previous phase is done.
+        :type local_only: bool
+        :param multi_iterations: Specifies if it is a multiple iterations phase.
+        :type multi_iterations: bool
+        Note: It is assumed that a normal(default) computation phase will run one round of local-remote.
+        """
         self.phases[phase_cls.__name__] = phase_cls
         self.multi_iterations[phase_cls.__name__] = multi_iterations
+        self.local_only[phase_cls.__name__] = local_only
         self.cache[self.id]['iterations'][phase_cls.__name__] = 0
 
     def __len__(self):
