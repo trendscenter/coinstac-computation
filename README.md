@@ -7,8 +7,10 @@
 ### A very intuitive wrapper for writing coinstac based computations:
 
 * Break down your computations into simple phases with automatic transition between phases.
-* Add as many phases as you want.
-* Even run phases that needs to be run multiple _local-remote_ trips(iterations). See advanced use case example below.
+* * Add as many phases as you want.
+* Phases **alternate between local and remote automatically** by default starting from the first phase of the local. See advanced use case example below for extras like:
+  * Run phases that needs to be run multiple _local-remote_ trips; Specify _multi_iterations=True_ while adding a phase.
+  * Run phases that needs to be run either in local or remote without making a trip(like preprocessing, gathering final results ...); Specify _local_only=True_ while adding a phase.
 * Installation: `pip install coinstac-computation`
 * Add entry `coinstac-computation` to the requirements.txt.
 
@@ -25,6 +27,18 @@ chmod u+x deploy.sh                 --- Needed only once -------
 ```
 --->
 
+#### **ComputationPhase** signature:
+```python
+from coinstac_computation import COINSTACPyNode, ComputationPhase
+class PhaseLoadData(ComputationPhase):
+    def _initialize(self):
+      """Put anything that needs to be initialized only once here"""
+      pass
+    
+    def compute(self):
+        """put phase logic here"""  
+        return {}
+```
 
 ### Example: Gather max even numbers from each site
 #### A full working use case is in the [examples/basic](./examples/basic) directory where:
