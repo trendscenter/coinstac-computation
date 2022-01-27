@@ -19,7 +19,7 @@ class COINSTACPyNode:
         assert self._mode in COINSTACPyNode._VALID_MODES_, \
             f"Invalid mode : {self._mode}, Use one of: {COINSTACPyNode._VALID_MODES_}"
 
-    def add_phase(self, phase_cls, local_only=False, multi_iterations=False):
+    def add_phase(self, phase_cls, local_only: bool = False, multi_iterations: bool = False):
         """
         :param phase_cls: Custom implementation of ComputationPhase class
         :type phase_cls: ComputationPhase
@@ -61,7 +61,9 @@ class COINSTACPyNode:
             if _out:
                 out.update(**_out)
         except Exception as e:
-            raise RuntimeError(f"ERROR! in Phase: *** {phase_key} *** {e}")
+            _tb.print_exc()
+            raise RuntimeError(f"ERROR! in {self._mode}-{data['state']['clientId']} "
+                               f"Phase:{phase_key} *** {e} ***")
 
         output = {"output": out}
 
@@ -90,16 +92,18 @@ class COINSTACPyNode:
         Backward compatibility for the old library. Deprecated now.
         """
         data = _json.loads(_sys.stdin.read())
-        output = {}
         if data.get('cache') and len(data['cache']) > 0:
             self._cache = data['cache']
             self._pipeline.cache = self._cache
+
+        self._debug = False
+        output = self.compute(data)
+        output['cache'] = self._cache
+
         try:
-            self._debug = False
-            output = self.compute(data)
-            output['cache'] = self._cache
             output = _json.dumps(output)
             _sys.stdout.write(output)
         except Exception as e:
             _tb.print_exc()
-            raise Exception(f"{data['state']['clientId']} error {e} \n ### Output: {output} ***")
+            raise Exception(f"Parsing error in {self._mode}-{data['state']['clientId']} *** {e} ***"
+                            f"\n Output: {output}")
