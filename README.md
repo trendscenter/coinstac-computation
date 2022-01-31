@@ -138,7 +138,7 @@ cd examples/basic/
 
 #### Overview:
 
-1. Specify when to end the iterative phase with a phase jump signal:
+1. Specify when to end the iterative phase with a phase jump signal as `jump_to_next=True`:
 
 ```python
 class PhaseSubmitVote(ComputationPhase):
