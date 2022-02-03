@@ -47,7 +47,7 @@ class COINSTACPyNode:
                 print("\n", file=log)
         except Exception as e:
             _tb.print_exc()
-            raise RuntimeError(f"Logging ERROR! in {self._mode}:{state['clientId']}")
+            raise RuntimeError(f"Logging ERROR! in {self._mode}:{state['clientId']} *** {e} ***")
 
     def compute(self, data):
         out = {}
@@ -73,8 +73,7 @@ class COINSTACPyNode:
                 out.update(**_out)
         except Exception as e:
             _tb.print_exc()
-            raise RuntimeError(f"ERROR! in {self._mode}-{data['state']['clientId']} "
-                               f"Phase:{phase_key} *** {e} ***")
+            raise RuntimeError(f"Phase:{phase_key} ERROR! in {self._mode}-{data['state']['clientId']} *** {e} ***")
 
         output = {"output": out}
 
@@ -116,5 +115,5 @@ class COINSTACPyNode:
             _sys.stdout.write(output)
         except Exception as e:
             _tb.print_exc()
-            raise Exception(f"Parsing error in {self._mode}-{data['state']['clientId']} *** {e} ***"
+            raise Exception(f"Parsing ERROR! in {self._mode}-{data['state']['clientId']} *** {e} ***"
                             f"\n Output: {output}")
