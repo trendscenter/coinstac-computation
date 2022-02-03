@@ -1,9 +1,11 @@
 import copy as _copy
 import json as _json
+import os
 import sys as _sys
 import traceback as _tb
 
 import coinstac_computation.utils as _utils
+import datetime as _dt
 
 
 class COINSTACPyNode:
@@ -31,20 +33,29 @@ class COINSTACPyNode:
         """
         self._pipeline.add_phase(phase_cls, local_only, multi_iterations)
 
-    def _print_logs(self):
-        print()
-        for k, v in self._logs.items():
-            print(f"[{k.upper()}]{'-' * 51}")
-            for k1, v1 in v.items():
-                print(f"\t[ {k1} ] -> {v1}")
+    def _print_logs(self, state):
+        try:
+            date_time = _dt.datetime.now().strftime("%H:%M:%S [%m/%d/%Y]")
+
+            with open(
+                    state['outputDirectory'] + os.sep + f"{self._mode}_{state['clientId']}_logs.txt", 'a'
+            ) as log:
+                for k, v in self._logs.items():
+                    print(f"[{k.upper()}] *** {date_time} ***", file=log)
+                    for k1, v1 in v.items():
+                        print(f"\t{k1} {v1}", file=log)
+                print("\n", file=log)
+        except Exception as e:
+            _tb.print_exc()
+            raise RuntimeError(f"Logging ERROR! in {self._mode}:{state['clientId']} *** {e} ***")
 
     def compute(self, data):
         out = {}
         if self._debug:
             self._logs['input'] = {}
-            self._logs['input']['PRE-COMPUTATION '] = _copy.deepcopy(data)
+            self._logs['input']['->'] = _copy.deepcopy(data['input'])
             self._logs['cache'] = {}
-            self._logs['cache']['PRE-COMPUTATION '] = _copy.deepcopy(self._cache)
+            self._logs['cache']['->'] = _copy.deepcopy(self._cache)
 
         if not self._cache.get('input_args'):
             """Some multi-iteration computations might need to reuse initial parameters, so save it."""
@@ -62,8 +73,7 @@ class COINSTACPyNode:
                 out.update(**_out)
         except Exception as e:
             _tb.print_exc()
-            raise RuntimeError(f"ERROR! in {self._mode}-{data['state']['clientId']} "
-                               f"Phase:{phase_key} *** {e} ***")
+            raise RuntimeError(f"Phase:{phase_key} ERROR! in {self._mode}-{data['state']['clientId']} *** {e} ***")
 
         output = {"output": out}
 
@@ -78,9 +88,9 @@ class COINSTACPyNode:
             output = self.compute(data)
 
         if self._debug:
-            self._logs['cache']['POST-COMPUTATION'] = _copy.deepcopy(self._cache)
-            self._logs['output'] = {'POST-COMPUTATION': _copy.deepcopy(output)}
-            self._print_logs()
+            self._logs['cache']['<-'] = _copy.deepcopy(self._cache)
+            self._logs['output'] = {'<-': _copy.deepcopy(output)}
+            self._print_logs(data['state'])
 
         return output
 
@@ -105,5 +115,5 @@ class COINSTACPyNode:
             _sys.stdout.write(output)
         except Exception as e:
             _tb.print_exc()
-            raise Exception(f"Parsing error in {self._mode}-{data['state']['clientId']} *** {e} ***"
+            raise Exception(f"Parsing ERROR! in {self._mode}-{data['state']['clientId']} *** {e} ***"
                             f"\n Output: {output}")
