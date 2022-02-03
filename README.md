@@ -11,7 +11,10 @@
 * Phases **alternate between local and remote automatically** by default starting from the first phase of the local. See advanced use case example below for extras like:
   * Run phases that needs to be run multiple _local-remote_ trips; Specify _multi_iterations=True_ while adding a phase.
   * Run phases that needs to be run either in local or remote without making a trip(like preprocessing, gathering final results ...); Specify _local_only=True_ while adding a phase.
-* Installation: `pip install coinstac-computation`
+* Automatic logging that saves what comes and leaves on each phase. Just set `debug=True`.
+
+#### Installation:
+* Run `pip install coinstac-computation`
 * Add entry `coinstac-computation` to the requirements.txt.
 
 <hr />
