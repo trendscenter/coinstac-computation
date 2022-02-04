@@ -172,37 +172,37 @@ local.add_phase(PhaseSubmitVote, multi_iterations=True)
 ### Sample from logs file in the output directory
 
 ```
-[INPUT] 14:23:32 02/04/2022 
- -> {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}
-[CACHE] 14:23:32 02/04/2022 
- -> {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 0, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}}
- <- {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 1, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3]], 'PHASE:PhaseCollectVote': True}
-[OUTPUT] 14:23:32 02/04/2022 
- <- {'output': {}, 'success': False}
+[INPUT] 14:27:37 02/04/2022 
+  ->{'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}
+[CACHE] 14:27:37 02/04/2022 
+  ->{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 0, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}}
+  <-{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 1, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3]], 'PHASE:PhaseCollectVote': True}
+[OUTPUT] 14:27:37 02/04/2022 
+  <-{'output': {}, 'success': False}
 
-[INPUT] 14:23:32 02/04/2022 
- -> {'local2': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': True, 'jump_to_next': False}, 'local0': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': True, 'jump_to_next': False}}
-[CACHE] 14:23:32 02/04/2022 
- -> {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 1, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3]], 'PHASE:PhaseCollectVote': True}
- <- {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 2, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1]], 'PHASE:PhaseCollectVote': True}
-[OUTPUT] 14:23:32 02/04/2022 
- <- {'output': {}, 'success': False}
+[INPUT] 14:27:37 02/04/2022 
+  ->{'local0': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': True, 'jump_to_next': False}, 'local3': {'vote': True, 'jump_to_next': False}}
+[CACHE] 14:27:37 02/04/2022 
+  ->{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 1, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3]], 'PHASE:PhaseCollectVote': True}
+  <-{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 2, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1]], 'PHASE:PhaseCollectVote': True}
+[OUTPUT] 14:27:37 02/04/2022 
+  <-{'output': {}, 'success': False}
 
-[INPUT] 14:23:32 02/04/2022 
- -> {'local0': {'vote': True, 'jump_to_next': False}, 'local3': {'vote': True, 'jump_to_next': False}, 'local2': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': True, 'jump_to_next': False}}
-[CACHE] 14:23:32 02/04/2022 
- -> {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 2, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1]], 'PHASE:PhaseCollectVote': True}
- <- {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 3, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1], [4, 0]], 'PHASE:PhaseCollectVote': True}
-[OUTPUT] 14:23:32 02/04/2022 
- <- {'output': {}, 'success': False}
+[INPUT] 14:27:37 02/04/2022 
+  ->{'local0': {'vote': True, 'jump_to_next': False}, 'local3': {'vote': True, 'jump_to_next': False}, 'local2': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': True, 'jump_to_next': False}}
+[CACHE] 14:27:37 02/04/2022 
+  ->{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 2, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1]], 'PHASE:PhaseCollectVote': True}
+  <-{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 3, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1], [4, 0]], 'PHASE:PhaseCollectVote': True}
+[OUTPUT] 14:27:37 02/04/2022 
+  <-{'output': {}, 'success': False}
 
-[INPUT] 14:23:32 02/04/2022 
- -> {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': True, 'jump_to_next': False}, 'local3': {'vote': True, 'jump_to_next': False}, 'local2': {'vote': True, 'jump_to_next': False}}
-[CACHE] 14:23:32 02/04/2022 
- -> {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 3, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1], [4, 0]], 'PHASE:PhaseCollectVote': True}
- <- {'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 4, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local1': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local0': {'vote': True, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1], [4, 0], [4, 0]], 'PHASE:PhaseCollectVote': True}
-[OUTPUT] 14:23:32 02/04/2022 
- <- {'output': {}, 'success': False}
+[INPUT] 14:27:37 02/04/2022 
+  ->{'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': True, 'jump_to_next': False}, 'local3': {'vote': True, 'jump_to_next': False}, 'local2': {'vote': True, 'jump_to_next': False}}
+[CACHE] 14:27:37 02/04/2022 
+  ->{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 3, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1], [4, 0]], 'PHASE:PhaseCollectVote': True}
+  <-{'PIPELINE:REMOTE': {'index': 0, 'iterations': {'PhaseCollectVote': 4, 'PhaseSendGlobalResults': 0, 'PhaseEndWithSuccess': 0}}, 'input_args': {'local0': {'vote': True, 'jump_to_next': False}, 'local1': {'vote': False, 'jump_to_next': False}, 'local2': {'vote': False, 'jump_to_next': False}, 'local3': {'vote': False, 'jump_to_next': False}}, 'next_phase': 'PhaseCollectVote', 'vote_ballot': [[1, 3], [3, 1], [4, 0], [4, 0]], 'PHASE:PhaseCollectVote': True}
+[OUTPUT] 14:27:37 02/04/2022 
+  <-{'output': {}, 'success': False}
 ...
 ```
 <hr />
