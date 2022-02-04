@@ -57,6 +57,9 @@ class COINSTACPyNode:
             self._cache['input_args'] = _ut.FrozenDict(_copy.deepcopy(data['input']))
 
         phase_key = self._cache.setdefault('next_phase', self._pipeline.phase_ids[0])
+        if self._mode == "LOCAL" and data['input'].get('jump_to_next'):
+            phase_key = self._pipeline.next_phase(data['input']['jump_to_next'])
+
         phase = self._pipeline.phases[phase_key](
             phase_key,
             self._cache, data['input'], data['state']
