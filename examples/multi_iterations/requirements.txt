@@ -1,4 +1,4 @@
 numpy>=1.21.2
-coinstac>=0.2.0
+coinstac~=0.3.0
 pydevd-pycharm~=212.5457.59
 coinstac-computation~=0.63

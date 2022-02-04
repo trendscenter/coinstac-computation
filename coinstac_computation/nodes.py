@@ -2,9 +2,8 @@ import copy as _copy
 import json as _json
 import os
 import sys as _sys
-import traceback as _tb
 
-import coinstac_computation.utils as _utils
+import coinstac_computation.utils as _ut
 import datetime as _dt
 
 
@@ -16,7 +15,7 @@ class COINSTACPyNode:
         self._mode = mode.upper()
         self._logs = {}
         self._debug = debug
-        self._pipeline = _utils.PhasePipeline(self._mode, self._cache)
+        self._pipeline = _ut.PhasePipeline(self._mode, self._cache)
 
         assert self._mode in COINSTACPyNode._VALID_MODES_, \
             f"Invalid mode : {self._mode}, Use one of: {COINSTACPyNode._VALID_MODES_}"
@@ -33,21 +32,17 @@ class COINSTACPyNode:
         """
         self._pipeline.add_phase(phase_cls, local_only, multi_iterations)
 
-    def _print_logs(self, state):
-        try:
-            date_time = _dt.datetime.now().strftime("%H:%M:%S [%m/%d/%Y]")
+    def _save_logs(self, state):
+        date_time = _dt.datetime.now().strftime("%H:%M:%S %m/%d/%Y")
 
-            with open(
-                    state['outputDirectory'] + os.sep + f"{self._mode}_{state['clientId']}_logs.txt", 'a'
-            ) as log:
-                for k, v in self._logs.items():
-                    print(f"[{k.upper()}] *** {date_time} ***", file=log)
-                    for k1, v1 in v.items():
-                        print(f"\t{k1} {v1}", file=log)
-                print("\n", file=log)
-        except Exception as e:
-            _tb.print_exc()
-            raise RuntimeError(f"Logging ERROR! in {self._mode}:{state['clientId']} *** {e} ***")
+        with open(
+                state['outputDirectory'] + os.sep + f"{self._mode}_{state['clientId']}_logs.txt", 'a'
+        ) as log:
+            for k, v in self._logs.items():
+                print(f"[{k.upper()}] {date_time} ", file=log)
+                for k1, v1 in v.items():
+                    print(f"  {k1}{v1}", file=log)
+            print('', file=log)
 
     def compute(self, data):
         out = {}
@@ -59,7 +54,7 @@ class COINSTACPyNode:
 
         if not self._cache.get('input_args'):
             """Some multi-iteration computations might need to reuse initial parameters, so save it."""
-            self._cache['input_args'] = _utils.FrozenDict(_copy.deepcopy(data['input']))
+            self._cache['input_args'] = _ut.FrozenDict(_copy.deepcopy(data['input']))
 
         phase_key = self._cache.setdefault('next_phase', self._pipeline.phase_ids[0])
         phase = self._pipeline.phases[phase_key](
@@ -67,19 +62,15 @@ class COINSTACPyNode:
             self._cache, data['input'], data['state']
         )
 
-        try:
-            _out = phase.compute()
-            if _out:
-                out.update(**_out)
-        except Exception as e:
-            _tb.print_exc()
-            raise RuntimeError(f"Phase:{phase_key} ERROR! in {self._mode}-{data['state']['clientId']} *** {e} ***")
+        _out = phase.compute()
+        if _out:
+            out.update(**_out)
 
         output = {"output": out}
 
         jump_to_next = out.get('jump_to_next', False)
         if self._mode == 'REMOTE':
-            jump_to_next = jump_to_next or _utils.check(all, 'jump_to_next', True, data['input'])
+            jump_to_next = jump_to_next or _ut.check(all, 'jump_to_next', True, data['input'])
             output['success'] = out.get('success', False)
 
         self._cache['next_phase'] = self._pipeline.next_phase(jump_to_next)
@@ -90,7 +81,7 @@ class COINSTACPyNode:
         if self._debug:
             self._logs['cache']['<-'] = _copy.deepcopy(self._cache)
             self._logs['output'] = {'<-': _copy.deepcopy(output)}
-            self._print_logs(data['state'])
+            self._save_logs(data['state'])
 
         return output
 
@@ -106,14 +97,7 @@ class COINSTACPyNode:
             self._cache = data['cache']
             self._pipeline.cache = self._cache
 
-        self._debug = False
         output = self.compute(data)
         output['cache'] = self._cache
 
-        try:
-            output = _json.dumps(output)
-            _sys.stdout.write(output)
-        except Exception as e:
-            _tb.print_exc()
-            raise Exception(f"Parsing ERROR! in {self._mode}-{data['state']['clientId']} *** {e} ***"
-                            f"\n Output: {output}")
+        _sys.stdout.write(_json.dumps(output))
