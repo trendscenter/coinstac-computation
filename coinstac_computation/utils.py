@@ -13,10 +13,12 @@ class FrozenDict(dict):
         super().__init__(_dict)
 
     def prompt(self, key, value):
-        raise ValueError(f'*** '
-                         f'Attempt to modify frozen dict '
-                         f'[{key} : {self[key]}] with [{key} : {value}]'
-                         f' ***')
+        raise ValueError(
+            f'*** '
+            f'Attempt to modify frozen dict '
+            f'[{key} : {self[key]}] with [{key} : {value}]'
+            f' ***'
+        )
 
     def __setitem__(self, key, value):
         if key not in self:
@@ -47,7 +49,7 @@ class ComputationPhase:
         """Runs only once"""
         pass
 
-    def compute(self):
+    def compute(self) -> dict:
         return {}
 
     def __str__(self):
@@ -84,7 +86,6 @@ class PhasePipeline:
         :type local_only: bool
         :param multi_iterations: Specifies if it is a multiple iterations phase.
         :type multi_iterations: bool
-        Note: It is assumed that a normal(default) computation phase will run one round of local-remote.
         """
         self.phases[phase_cls.__name__] = phase_cls
         self.multi_iterations[phase_cls.__name__] = multi_iterations
