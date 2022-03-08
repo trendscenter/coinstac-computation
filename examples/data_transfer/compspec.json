@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "name": "Base coinstac computation example.",
+    "id": "coinstac-computation",
+    "version": "v1.0.0",
+    "repository": "https:\/\/github.com\/trendscenter\/coinstac_computation.git",
+    "description": "...",
+    "compspecVersion": 2
+  },
+  "computation": {
+    "type": "docker",
+    "dockerImage": "base",
+    "command": [
+      "python"
+    ],
+    "remote": {
+      "type": "docker",
+      "dockerImage": "base",
+      "command": [
+        "python"
+      ]
+    },
+    "input": {},
+    "output": {
+    },
+    "display": {
+      "type": "string"
+    }
+  }
+}

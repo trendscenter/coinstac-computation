@@ -8,7 +8,7 @@ import datetime as _dt
 
 
 class COINSTACPyNode:
-    _VALID_MODES_ = ['REMOTE', 'LOCAL']
+    _VALID_MODES_ = [_ut.MODE_LOCAL, _ut.MODE_REMOTE]
 
     def __init__(self, mode: str, debug=False):
         self._cache = {}
@@ -45,7 +45,6 @@ class COINSTACPyNode:
             print('', file=log)
 
     def compute(self, data):
-        out = {}
         if self._debug:
             self._logs['input'] = {}
             self._logs['input']['->'] = _copy.deepcopy(data['input'])
@@ -57,36 +56,37 @@ class COINSTACPyNode:
             self._cache['input_args'] = _ut.FrozenDict(_copy.deepcopy(data['input']))
 
         phase_key = self._cache.setdefault('next_phase', self._pipeline.phase_ids[0])
-        if self._mode == "LOCAL" and data['input'].get('jump_to_next'):
+        if self._mode == _ut.MODE_LOCAL and data['input'].get('jump_to_next'):
             phase_key = self._pipeline.next_phase(data['input']['jump_to_next'])
 
         phase = self._pipeline.phases[phase_key](
             phase_key,
-            self._cache, data['input'], data['state']
+            self._cache, data['input'], data['state'],
+            self._mode
         )
 
-        _out = phase.compute()
-        if _out:
-            out.update(**_out)
+        phase_out = phase.compute()
+        if not isinstance(phase_out, dict):
+            phase_out = {}
 
-        output = {"output": out}
+        node_output = {"output": phase_out}
 
-        jump_to_next = out.get('jump_to_next', False)
-        if self._mode == 'REMOTE':
+        jump_to_next = phase_out.get('jump_to_next', False)
+        if self._mode == _ut.MODE_REMOTE:
             jump_to_next = jump_to_next or _ut.check(all, 'jump_to_next', True, data['input'])
-            output['success'] = out.get('success', False)
+            node_output['success'] = phase_out.get('success', False)
 
         self._cache['next_phase'] = self._pipeline.next_phase(jump_to_next)
 
         if self._pipeline.local_only.get(self._cache['next_phase']):
-            output = self.compute(data)
+            node_output = self.compute(data)
 
         if self._debug:
             self._logs['cache']['<-'] = _copy.deepcopy(self._cache)
-            self._logs['output'] = {'<-': _copy.deepcopy(output)}
+            self._logs['output'] = {'<-': _copy.deepcopy(node_output)}
             self._save_logs(data['state'])
 
-        return output
+        return node_output
 
     def __call__(self, *args, **kwargs):
         return self.compute(*args, **kwargs)

@@ -1,4 +1,10 @@
 from collections import OrderedDict as _ODict
+from typing import Union
+import numpy as _np
+import os as _os
+
+MODE_LOCAL = "LOCAL"
+MODE_REMOTE = "REMOTE"
 
 
 def check(logic, k, v, kw):
@@ -32,11 +38,12 @@ class FrozenDict(dict):
 
 
 class ComputationPhase:
-    def __init__(self, phase_id, cache, input, state, **kw):
+    def __init__(self, phase_id, cache, input, state, mode, **kw):
         self.id = f"PHASE:{phase_id}"
         self.cache = cache
         self.input = input
         self.state = state
+        self.mode = mode
 
         """Cached default input obtained from inputspec.json file to reuse during multiple iterations"""
         self.input_args = FrozenDict(cache['input_args'])
@@ -51,6 +58,27 @@ class ComputationPhase:
 
     def compute(self) -> dict:
         return {}
+
+    def send(self, key, data: Union[list, _np.ndarray]) -> dict:
+        if isinstance(data, list):
+            data = _np.array(data, dtype=object)
+        out = {key: f"{key}.npy"}
+        _np.save(self.state['transferDirectory'] + _os.sep + out[key], data)
+        return out
+
+    def recv(self, key):
+        if self.mode == MODE_LOCAL:
+            return _np.load(self.state['baseDirectory'] + _os.sep + self.input[key], allow_pickle=True)
+        elif self.mode == MODE_REMOTE:
+            data = []
+            for site, site_vars in self.input.items():
+                data.append(
+                    _np.load(
+                        self.state['baseDirectory'] + _os.sep + site + _os.sep + site_vars[key],
+                        allow_pickle=True
+                    )
+                )
+            return data
 
     def __str__(self):
         return f"{self.id}"
