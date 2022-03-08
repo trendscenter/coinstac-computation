@@ -140,7 +140,8 @@ cd examples/basic/
 
 <hr />
 
-## Advanced use case [example](./examples/multi_iterations) with multiple iterations where:
+### Advanced use cases:
+#### 1. Multiple local <---> remote iterations [example](./examples/multi_iterations):
 
 * Each sites cast a vote(positive vote if number is even) for multiple(default=51) times.
 * Remote gathers the votes and returns the final voting result to all sites at the end.
@@ -175,6 +176,55 @@ class PhaseSubmitVote(ComputationPhase):
 ```python
 local.add_phase(PhaseSubmitVote, multi_iterations=True)
 ```
+
+#### 2. Send data across local <---> remote [example](./examples/data_transfer):
+Local: 
+```python
+import os
+from coinstac_computation import COINSTACPyNode, ComputationPhase
+import numpy as np
+
+class PhaseLoadData(ComputationPhase):
+    def compute(self):
+        out = {}
+        data = np.random.randn(*self.input['matrix_shape'])
+        out.update(**self.send("site_matrix", data))
+        return out
+
+
+class PhaseSaveResult(ComputationPhase):
+    def compute(self):
+        data = self.recv('averaged_matrix')
+        np.save(self.state['outputDirectory'] + os.sep + "averaged_matrix.npy", data)
+
+
+local = COINSTACPyNode(mode='local', debug=True)
+local.add_phase(PhaseLoadData)
+local.add_phase(PhaseSaveResult)
+```
+
+Remote:
+```python
+from coinstac_computation import COINSTACPyNode, ComputationPhase, PhaseEndWithSuccess
+import numpy as np
+
+
+class PhaseAggregateMatrix(ComputationPhase):
+    def compute(self):
+        out = {}
+        data = self.recv("site_matrix")
+        mean_data = np.array(data).mean(0)
+        out.update(**self.send("averaged_matrix", mean_data))
+        return out
+
+
+remote = COINSTACPyNode(mode='remote', debug=True)
+remote.add_phase(PhaseAggregateMatrix)
+remote.add_phase(PhaseEndWithSuccess)
+
+```
+
+<hr />
 
 ### Sample logs from local0
 ```
