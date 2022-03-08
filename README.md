@@ -178,6 +178,8 @@ local.add_phase(PhaseSubmitVote, multi_iterations=True)
 ```
 
 #### 2. Send data across local <---> remote [example](./examples/data_transfer):
+To make it simple, we send a matrix of size 1000 by 1000 to remote, aggregate it by averaging, and return to each site.
+
 Local: 
 ```python
 import os
