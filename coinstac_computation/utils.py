@@ -2,16 +2,10 @@ from collections import OrderedDict as _ODict
 from typing import Union
 import numpy as _np
 import os as _os
+from functools import partial as _partial
 
 MODE_LOCAL = "LOCAL"
 MODE_REMOTE = "REMOTE"
-
-
-def check(logic, k, v, kw):
-    phases = []
-    for site_vars in kw.values():
-        phases.append(site_vars.get(k) == v)
-    return logic(phases)
 
 
 class FrozenDict(dict):
@@ -37,16 +31,23 @@ class FrozenDict(dict):
             self[k] = v
 
 
+def multi_load(file_key, state, site, site_vars):
+    file_path = state['baseDirectory'] + _os.sep + site + _os.sep + site_vars[file_key]
+    return _np.load(file_path, allow_pickle=True)
+
+
 class ComputationPhase:
-    def __init__(self, phase_id, cache, input, state, mode, **kw):
+    def __init__(self, phase_id, node, **kw):
         self.id = f"PHASE:{phase_id}"
-        self.cache = cache
-        self.input = input
-        self.state = state
-        self.mode = mode
+        self.cache = node.cache
+        self.input = node.input
+        self.state = node.state
+        self.mode = node.mode
+        self.debug = node.debug
+        self.pool = node.pool
 
         """Cached default input obtained from inputspec.json file to reuse during multiple iterations"""
-        self.input_args = FrozenDict(cache['input_args'])
+        self.input_args = FrozenDict(self.cache['input_args'])
 
         if not self.cache.get(self.id):
             self._initialize()
@@ -62,6 +63,7 @@ class ComputationPhase:
     def send(self, key, data: Union[list, _np.ndarray]) -> dict:
         if isinstance(data, list):
             data = _np.array(data, dtype=object)
+    
         out = {key: f"{key}.npy"}
         _np.save(self.state['transferDirectory'] + _os.sep + out[key], data)
         return out
@@ -70,18 +72,21 @@ class ComputationPhase:
         if self.mode == MODE_LOCAL:
             return _np.load(self.state['baseDirectory'] + _os.sep + self.input[key], allow_pickle=True)
         elif self.mode == MODE_REMOTE:
-            data = []
-            for site, site_vars in self.input.items():
-                data.append(
-                    _np.load(
-                        self.state['baseDirectory'] + _os.sep + site + _os.sep + site_vars[key],
-                        allow_pickle=True
-                    )
+            return list(
+                self.pool.starmap(
+                    _partial(multi_load, key, self.state), self.input.items()
                 )
-            return data
+            )
 
     def __str__(self):
         return f"{self.id}"
+
+
+def check(logic, k, v, kw):
+    phases = []
+    for site_vars in kw.values():
+        phases.append(site_vars.get(k) == v)
+    return logic(phases)
 
 
 class PhaseEndWithSuccess(ComputationPhase):
