@@ -63,7 +63,7 @@ class ComputationPhase:
     def send(self, key, data: Union[list, _np.ndarray]) -> dict:
         if isinstance(data, list):
             data = _np.array(data, dtype=object)
-    
+
         out = {key: f"{key}.npy"}
         _np.save(self.state['transferDirectory'] + _os.sep + out[key], data)
         return out
@@ -77,6 +77,9 @@ class ComputationPhase:
                     _partial(multi_load, key, self.state), self.input.items()
                 )
             )
+
+    def base_path(self, key):
+        return self.state["baseDirectory"] + _os.sep + self.input_args[key]
 
     def __str__(self):
         return f"{self.id}"
