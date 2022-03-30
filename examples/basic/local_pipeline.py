@@ -13,7 +13,7 @@ class PhaseLoadData(ComputationPhase):
 
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
-        with open(f"{self.state['outputDirectory'] + os.sep + 'results.txt'}", 'w') as out:
+        with open(f"{self.out_dir + os.sep + 'results.txt'}", 'w') as out:
             out.write(f"{self.input['aggregated_data']}")
 
 

@@ -14,7 +14,7 @@ class PhaseLoadData(ComputationPhase):
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
         data = self.recv('averaged_matrix')
-        np.save(self.state['outputDirectory'] + os.sep + "averaged_matrix.npy", data)
+        np.save(self.out_dir + os.sep + "averaged_matrix.npy", data)
 
 
 local = COINSTACPyNode(mode='local', debug=True)

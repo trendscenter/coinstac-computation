@@ -11,7 +11,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="coinstac-computation",
-    version="1.0.1",
+    version="1.0.2",
     description="Generic computation implementation on COINSTAC.",
     long_description=README,
     long_description_content_type="text/markdown",
