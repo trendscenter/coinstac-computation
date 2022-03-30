@@ -91,7 +91,7 @@ class PhaseLoadData(ComputationPhase):
 
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
-        with open(f"{self.state['outputDirectory'] + os.sep + 'results.txt'}", 'w') as out:
+        with open(f"{self.out_dir + os.sep + 'results.txt'}", 'w') as out:
             out.write(f"{self.input['aggregated_data']}")
 
 
@@ -158,7 +158,7 @@ class PhaseSubmitVote(ComputationPhase):
         """This method runs only once"""
         self.cache['data_index'] = 0
         self.cache['data'] = []
-        for line in open(self.state['baseDirectory'] + os.sep + self.input_args['data_source']).readlines():
+        for line in open(self.base_dir + os.sep + self.input_args['data_source']).readlines():
             self.cache['data'].append(float(line.strip()))
 
     def compute(self):
@@ -197,7 +197,7 @@ class PhaseLoadData(ComputationPhase):
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
         data = self.recv('averaged_matrix')
-        np.save(self.state['outputDirectory'] + os.sep + "averaged_matrix.npy", data)
+        np.save(self.out_dir + os.sep + "averaged_matrix.npy", data)
 
 
 local = COINSTACPyNode(mode='local', debug=True)

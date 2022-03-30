@@ -65,12 +65,12 @@ class ComputationPhase:
             data = _np.array(data, dtype=object)
 
         out = {key: f"{key}.npy"}
-        _np.save(self.state['transferDirectory'] + _os.sep + out[key], data)
+        _np.save(self.transfer_dir + _os.sep + out[key], data)
         return out
 
     def recv(self, key):
         if self.mode == MODE_LOCAL:
-            return _np.load(self.state['baseDirectory'] + _os.sep + self.input[key], allow_pickle=True)
+            return _np.load(self.base_dir + _os.sep + self.input[key], allow_pickle=True)
         elif self.mode == MODE_REMOTE:
             return list(
                 self.pool.starmap(
@@ -78,8 +78,23 @@ class ComputationPhase:
                 )
             )
 
-    def base_path(self, key):
-        return self.state["baseDirectory"] + _os.sep + self.input_args[key]
+    @property
+    def base_dir(self):
+        return self.state["baseDirectory"]
+
+    @property
+    def transfer_dir(self):
+        return self.state["transferDirectory"]
+
+    @property
+    def out_dir(self):
+        return self.state["outputDirectory"]
+
+    def path(self, key="_SOME_KEY_"):
+        """Path to a folder in baseDirectory, where folder name is stored in input arguments(initial args) with a key.
+        Eg: We have "images_path": "raw_images" in inputspecs or from the GUI.
+        self.path('images_path') returns 'self.base_dir/raw_images' """
+        return _os.path.join(self.base_dir, self.input_args.get(key, ''))
 
     def __str__(self):
         return f"{self.id}"

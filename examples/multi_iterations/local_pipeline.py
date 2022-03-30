@@ -12,7 +12,7 @@ class PhaseSubmitVote(ComputationPhase):
     def _initialize(self):
         self.cache['data_index'] = 0
         self.cache['data'] = []
-        for line in open(self.state['baseDirectory'] + os.sep + self.input_args['data_source']).readlines():
+        for line in open(self.base_dir + os.sep + self.input_args['data_source']).readlines():
             self.cache['data'].append(float(line.strip()))
 
     def compute(self):
@@ -26,7 +26,7 @@ class PhaseSubmitVote(ComputationPhase):
 
 class PhaseSaveResult(ComputationPhase):
     def compute(self):
-        with open(f"{self.state['outputDirectory'] + os.sep + 'vote_results.json'}", 'w') as out:
+        with open(f"{self.out_dir + os.sep + 'vote_results.json'}", 'w') as out:
             json.dump(self.input['vote_result'], out)
 
 
